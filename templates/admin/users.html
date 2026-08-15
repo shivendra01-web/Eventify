@@ -1,0 +1,43 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manage Users — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4" data-aos="fade-up">
+  <h2 class="section-title">Manage Users</h2>
+  <p class="text-dim mb-0">{{ users|length }} registered user(s)</p>
+</div>
+
+<div class="glass p-3 mb-4" data-aos="fade-up">
+  <form method="get" class="d-flex gap-2">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-glass" placeholder="Search by name or email...">
+    <button type="submit" class="btn btn-outline-glow"><i class="fa-solid fa-magnifying-glass"></i></button>
+  </form>
+</div>
+
+<div class="glass-card p-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th><th>Bookings</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td class="text-mono">#{{ u.id }}</td>
+          <td>{{ u.name }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.phone or '—' }}</td>
+          <td>{{ u.created_at.strftime('%d %b %Y') }}</td>
+          <td>{{ u.bookings|length }}</td>
+          <td><span class="badge-status {{ u.status }}">{{ u.status|capitalize }}</span></td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('admin_user_toggle', user_id=u.id) }}">
+              <button type="submit" class="btn btn-ghost-sm">{{ 'Disable' if u.status=='active' else 'Activate' }}</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-dim py-5">No users found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

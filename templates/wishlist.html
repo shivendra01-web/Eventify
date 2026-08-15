@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Wishlist — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container">
+    <div class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">My Wishlist</h2>
+      <p class="text-dim">Events you've saved for later</p>
+    </div>
+
+    {% if items %}
+    <div class="row g-4" id="wishlistGrid">
+      {% for item in items %}
+      {% set e = item.event %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" id="wish-{{ e.id }}">
+        {% include "_event_card.html" %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" data-aos="fade-up">
+      <div class="icon-wrap"><i class="fa-regular fa-heart"></i></div>
+      <h5 class="mb-2">Your wishlist is empty</h5>
+      <p class="text-dim mb-4">Save events you're interested in and find them here later.</p>
+      <a href="{{ url_for('events') }}" class="btn btn-glow">Discover Events</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll('#wishlistGrid .wishlist-btn').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const id = btn.dataset.eventId;
+    await fetch(`/wishlist/toggle/${id}`, {method:'POST'});
+    document.querySelector(`#wish-${id}`).style.transition = 'opacity .3s ease';
+    document.querySelector(`#wish-${id}`).style.opacity = '0';
+    setTimeout(() => document.querySelector(`#wish-${id}`)?.remove(), 300);
+  });
+});
+</script>
+{% endblock %}

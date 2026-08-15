@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}My Ticket — {{ booking.event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">Your Digital Ticket</h2>
+      <p class="text-dim">Present this QR code at the venue entrance</p>
+    </div>
+    {% include "_ticket_card.html" %}
+
+    {% if booking.has_streaming_item %}
+    <div class="glass-card p-3 mt-4 d-flex justify-content-between align-items-center flex-wrap gap-2" data-aos="fade-up">
+      <span><i class="fa-solid fa-satellite-dish me-2 text-info"></i>This booking includes Live Streaming access.</span>
+      <a href="{{ url_for('stream_access', booking_id=booking.id) }}" class="btn btn-outline-glow btn-sm">Open Stream</a>
+    </div>
+    {% endif %}
+
+    {% if booking.pending_transfer %}
+    <div class="glass-card p-3 mt-4" data-aos="fade-up">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span><i class="fa-solid fa-right-left me-2 text-warning"></i>Transfer pending — sent to {{ booking.pending_transfer.to_email }}</span>
+        <form method="post" action="{{ url_for('transfer_cancel', booking_id=booking.id) }}">
+          <button type="submit" class="btn btn-outline-glow btn-sm">Cancel Transfer</button>
+        </form>
+      </div>
+    </div>
+    {% elif booking.status == 'confirmed' and booking.event.date >= today %}
+    <div class="d-flex justify-content-center mt-4" data-aos="fade-up">
+      <a href="{{ url_for('transfer_start', booking_id=booking.id) }}" class="btn btn-ghost-sm"><i class="fa-solid fa-right-left me-1"></i> Transfer This Ticket</a>
+    </div>
+    {% endif %}
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+      <button onclick="window.print()" class="btn btn-outline-glow"><i class="fa-solid fa-download me-1"></i> Download Ticket</button>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-glow"><i class="fa-solid fa-gauge me-1"></i> Go to Dashboard</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

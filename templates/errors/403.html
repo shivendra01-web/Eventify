@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Access Denied — Eventify{% endblock %}
+{% block content %}
+<section class="d-flex align-items-center" style="min-height:100vh;">
+  <div class="container">
+    <div class="empty-state" data-aos="zoom-in">
+      <div class="icon-wrap"><i class="fa-solid fa-lock"></i></div>
+      <h4 class="mb-2">Unauthorized Access</h4>
+      <p class="text-dim mb-4">You don't have permission to view this page.</p>
+      <a href="{{ url_for('home') }}" class="btn btn-glow">Back to Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

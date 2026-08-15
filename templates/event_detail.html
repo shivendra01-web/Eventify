@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="glass-card overflow-hidden mb-4" data-aos="fade-up">
+          <img src="{{ event.image }}" alt="{{ event.title }}" class="w-100" style="height:380px;object-fit:cover;">
+        </div>
+
+        <div data-aos="fade-up">
+          <span class="cat-badge d-inline-block mb-3" style="position:static;">{{ event.category }}</span>
+          <h1 class="display-font mb-3" style="font-size:2.2rem;">{{ event.title }}</h1>
+          <div class="d-flex flex-wrap gap-4 text-dim mb-4">
+            <span><i class="fa-regular fa-calendar me-2 text-info"></i>{{ event.date.strftime('%d %B %Y') }}</span>
+            <span><i class="fa-regular fa-clock me-2 text-info"></i>{{ event.time }}</span>
+            <span><i class="fa-solid fa-location-dot me-2 text-info"></i>{{ event.venue }}, {{ event.location }}</span>
+            <span><i class="fa-solid fa-user-tie me-2 text-info"></i>{{ event.organizer }}</span>
+          </div>
+          <h5 class="mb-3">About This Event</h5>
+          <p class="text-dim mb-4">{{ event.description }}</p>
+        </div>
+
+        <div class="glass-card p-4 mb-4" data-aos="fade-up">
+          <h5 class="mb-4">Event Schedule</h5>
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex gap-3">
+              <span class="text-mono text-info" style="width:90px;">{{ event.time }}</span>
+              <span class="text-dim">Doors open · Registration & welcome</span>
+            </div>
+            <div class="d-flex gap-3">
+              <span class="text-mono text-info" style="width:90px;">+30 min</span>
+              <span class="text-dim">Opening remarks & main program begins</span>
+            </div>
+            <div class="d-flex gap-3">
+              <span class="text-mono text-info" style="width:90px;">+2 hrs</span>
+              <span class="text-dim">Networking break & refreshments</span>
+            </div>
+            <div class="d-flex gap-3">
+              <span class="text-mono text-info" style="width:90px;">Closing</span>
+              <span class="text-dim">Wrap-up and closing remarks</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card p-4 mb-4" data-aos="fade-up">
+          <h5 class="mb-3">Event Rules</h5>
+          <ul class="text-dim mb-0">
+            <li>Entry permitted only with a valid digital ticket / QR code.</li>
+            <li>Tickets are non-transferable and non-refundable.</li>
+            <li>Please arrive at least 30 minutes before the scheduled time.</li>
+            <li>Outside food and beverages are not permitted at the venue.</li>
+          </ul>
+        </div>
+
+        <div class="glass-card p-4 mb-4" data-aos="fade-up">
+          <h5 class="mb-3">Frequently Asked Questions</h5>
+          <div class="accordion" id="faqAccordion">
+            {% set faqs = [
+              ("Can I get a refund if I can't attend?", "Tickets are non-refundable, but you may transfer your booking details to another attendee by contacting support before the event."),
+              ("Will I receive a physical ticket?", "No — Eventify issues a digital ticket with a unique QR code, accessible from your dashboard and downloadable as needed."),
+              ("Is there an age restriction?", "Age restrictions vary by event. Please check the event description or contact the organizer for specifics."),
+            ] %}
+            {% for q, a in faqs %}
+            <div class="accordion-item bg-transparent border-0 mb-2" style="border-bottom:1px solid var(--border) !important;">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed faq-toggle bg-transparent text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}">
+                  {{ q }}
+                </button>
+              </h2>
+              <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-dim">{{ a }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="glass-card p-4 sticky-top" style="top:110px;" data-aos="fade-left">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-dim">Starting from</span>
+            <span class="price-tag fs-4">₹{{ '%.0f'|format(event.min_price) }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="text-dim">Availability</span>
+            {% if event.is_sold_out %}
+            <span class="badge-status cancelled">Sold Out</span>
+            {% elif event.available_seats < 30 %}
+            <span class="badge-status disabled">{{ event.available_seats }} seats left</span>
+            {% else %}
+            <span class="badge-status active">{{ event.available_seats }} seats available</span>
+            {% endif %}
+          </div>
+          {% if event.is_sold_out %}
+          <button class="btn btn-glow w-100 mb-3" disabled>Sold Out</button>
+          {% else %}
+          <a href="{{ url_for('book_tickets', event_id=event.id) }}" class="btn btn-glow w-100 mb-3">Book Now</a>
+          {% endif %}
+          <button class="btn btn-outline-glow w-100 wishlist-btn-inline d-flex align-items-center justify-content-center gap-2 wishlist-btn"
+                  style="position:static;width:100%;height:auto;border-radius:100px;"
+                  data-event-id="{{ event.id }}" {% if not current_user.is_authenticated %}data-auth-required="true"{% endif %}>
+            <i class="{% if in_wishlist %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+            <span>{{ 'In Wishlist' if in_wishlist else 'Add to Wishlist' }}</span>
+          </button>
+          <hr style="border-color: var(--border);">
+          <div class="d-flex flex-column gap-2 text-dim" style="font-size:.88rem;">
+            <span><i class="fa-solid fa-ticket me-2 text-info"></i>{{ event.ticket_types|length }} ticket type(s) available</span>
+            <span><i class="fa-solid fa-shield-halved me-2 text-info"></i>Secure checkout & instant confirmation</span>
+            <span><i class="fa-solid fa-qrcode me-2 text-info"></i>Digital ticket with QR code</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if related %}
+    <div class="mt-5">
+      <h4 class="mb-4" data-aos="fade-up">Related Events</h4>
+      <div class="row g-4">
+        {% for e in related %}
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+          {% include "_event_card.html" %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

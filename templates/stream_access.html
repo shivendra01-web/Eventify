@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Live Stream — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">📺 Live Stream Access</h2>
+      <p class="text-dim">{{ event.title }} · {{ event.date.strftime('%d %b %Y') }} · {{ event.time }}</p>
+    </div>
+
+    <div class="glass-card p-4 p-md-5 text-center" data-aos="fade-up">
+      <div class="mb-3"><i class="fa-solid fa-circle-check text-success fs-2"></i></div>
+      <h6 class="mb-3">Your streaming entitlement is verified</h6>
+
+      {% if event.streaming_url %}
+        <a href="{{ event.streaming_url }}" target="_blank" rel="noopener" class="btn btn-glow btn-lg">
+          <i class="fa-solid fa-play me-1"></i> Join Live Stream
+        </a>
+      {% else %}
+        <div class="alert-glass p-3" style="font-size:.85rem;">
+          <i class="fa-solid fa-clock me-1"></i> The stream link hasn't been published yet.
+          It will appear here automatically once the organizer connects it before the event.
+        </div>
+      {% endif %}
+
+      <p class="text-faint mt-4 mb-0" style="font-size:.78rem;">
+        Booking ID {{ booking.booking_ref }} — this page is only visible to the verified ticket holder.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

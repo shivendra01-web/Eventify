@@ -1,0 +1,83 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Analytics — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4" data-aos="fade-up">
+  <h2 class="section-title">Platform Analytics</h2>
+  <p class="text-dim">Deep dive into revenue, bookings and engagement</p>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4" data-aos="fade-up">
+    <div class="glass-card p-4">
+      <span class="text-dim">Total Revenue</span>
+      <div class="stat-number" style="font-size:1.8rem;">₹{{ '{:,.0f}'.format(total_revenue) }}</div>
+    </div>
+  </div>
+  <div class="col-md-4" data-aos="fade-up" data-aos-delay="60">
+    <div class="glass-card p-4">
+      <span class="text-dim">Total Bookings</span>
+      <div class="stat-number" style="font-size:1.8rem;">{{ total_bookings }}</div>
+    </div>
+  </div>
+  <div class="col-md-4" data-aos="fade-up" data-aos-delay="120">
+    <div class="glass-card p-4">
+      <span class="text-dim">Registered Users</span>
+      <div class="stat-number" style="font-size:1.8rem;">{{ user_count }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="glass-card p-4 h-100" data-aos="fade-up">
+      <h6 class="mb-3">Monthly Bookings</h6>
+      <canvas id="bookingsMonthChart" height="150"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="glass-card p-4 h-100" data-aos="fade-up">
+      <h6 class="mb-3">Popular Categories (by tickets sold)</h6>
+      <canvas id="popCatChart" height="150"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="glass-card p-4" data-aos="fade-up">
+  <h6 class="mb-3">Most Popular Events</h6>
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Event</th><th>Category</th><th>Seats Booked</th><th>Total Seats</th><th>Fill Rate</th></tr></thead>
+      <tbody>
+        {% for e in popular %}
+        <tr>
+          <td>{{ e.title }}</td>
+          <td>{{ e.category }}</td>
+          <td>{{ e.booked_seats }}</td>
+          <td>{{ e.total_seats }}</td>
+          <td>{{ "%.0f"|format((e.booked_seats / e.total_seats * 100) if e.total_seats else 0) }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+Chart.defaults.color = '#97a0c3';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
+
+new Chart(document.getElementById('bookingsMonthChart'), {
+  type: 'bar',
+  data: { labels: {{ month_labels|tojson }}, datasets: [{ label: 'Bookings', data: {{ month_booking_values|tojson }}, backgroundColor: '#22d3ee', borderRadius: 6 }] },
+  options: { plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('popCatChart'), {
+  type: 'pie',
+  data: { labels: {{ cat_labels|tojson }}, datasets: [{ data: {{ cat_values|tojson }}, backgroundColor: ['#7c3aed','#2563eb','#22d3ee','#ec4899','#f59e0b','#22c55e','#f43f5e','#a78bfa','#38bdf8','#fb7185'] }] },
+  options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10 } } } }
+});
+</script>
+{% endblock %}

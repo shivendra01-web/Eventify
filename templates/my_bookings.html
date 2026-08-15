@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}My Bookings — Eventify{% endblock %}
+
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container">
+
+    <div class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">My Bookings</h2>
+      <p class="text-dim">All your event bookings in one place</p>
+    </div>
+
+    {% if bookings %}
+
+    <div class="d-flex flex-column gap-3">
+
+      {% for b in bookings %}
+
+      <div class="glass-card p-4" data-aos="fade-up">
+
+        <div class="row align-items-center g-3">
+
+          <!-- EVENT IMAGE -->
+          <div class="col-md-2">
+            <img
+              src="{{ b.event.image }}"
+              class="rounded-3 w-100"
+              style="height:80px;object-fit:cover;"
+              alt="{{ b.event.title }}">
+          </div>
+
+          <!-- EVENT DETAILS -->
+          <div class="col-md-4">
+
+            <h6 class="mb-1">
+              {{ b.event.title }}
+            </h6>
+
+            <p class="text-faint mb-1" style="font-size:.82rem;">
+              <i class="fa-regular fa-calendar me-1"></i>
+              {{ b.event.date.strftime('%d %b %Y') }}
+              · {{ b.event.venue }}
+            </p>
+
+            <p class="text-faint mb-0" style="font-size:.78rem;">
+              Booking:
+              <span class="text-mono">
+                {{ b.booking_ref }}
+              </span>
+            </p>
+
+          </div>
+
+          <!-- STATUS -->
+          <div class="col-md-2">
+
+            <span class="badge-status {{ b.status }}">
+              {{ b.status|capitalize }}
+            </span>
+
+            {% if b.coupon_code %}
+            <div class="mt-2">
+              <span class="badge bg-success">
+                {{ b.coupon_code }} · {{ '%.0f'|format(b.discount_amount) }} OFF
+              </span>
+            </div>
+            {% endif %}
+
+          </div>
+
+          <!-- PRICE -->
+          <div class="col-md-2">
+
+            <div class="price-tag">
+              ₹{{ '%.0f'|format(b.total_amount) }}
+            </div>
+
+            {% if b.discount_amount and b.discount_amount > 0 %}
+            <small class="text-success">
+              You saved ₹{{ '%.0f'|format(b.discount_amount) }}
+            </small>
+            {% endif %}
+
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="col-md-2 text-md-end">
+
+            <!-- VIEW TICKET -->
+            <a
+              href="{{ url_for('ticket', booking_id=b.id) }}"
+              class="btn btn-ghost-sm mb-2"
+              title="View Ticket">
+              <i class="fa-solid fa-ticket"></i>
+              Ticket
+            </a>
+
+            <!-- LIVE STREAM -->
+            {% if b.has_streaming_item and b.status == 'confirmed' %}
+
+            <a
+              href="{{ url_for('stream_access', booking_id=b.id) }}"
+              class="btn btn-ghost-sm mb-2"
+              title="Watch Live Stream">
+              <i class="fa-solid fa-video"></i>
+              Live
+            </a>
+
+            {% endif %}
+
+            <!-- TRANSFER -->
+            {% if b.status == 'confirmed' and b.event.date >= today %}
+
+            {% if not b.pending_transfer %}
+
+            <a
+              href="{{ url_for('transfer_start', booking_id=b.id) }}"
+              class="btn btn-ghost-sm"
+              title="Transfer Ticket">
+              <i class="fa-solid fa-right-left"></i>
+              Transfer
+            </a>
+
+            {% else %}
+
+            <a
+              href="{{ url_for('ticket', booking_id=b.id) }}"
+              class="btn btn-ghost-sm"
+              title="Transfer Pending">
+              <i class="fa-solid fa-clock"></i>
+              Transfer Pending
+            </a>
+
+            {% endif %}
+
+            {% endif %}
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state" data-aos="fade-up">
+
+      <div class="icon-wrap">
+        <i class="fa-solid fa-receipt"></i>
+      </div>
+
+      <h5 class="mb-2">
+        No bookings yet
+      </h5>
+
+      <p class="text-dim mb-4">
+        Once you book an event, it will show up here.
+      </p>
+
+      <a
+        href="{{ url_for('events') }}"
+        class="btn btn-glow">
+        Explore Events
+      </a>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

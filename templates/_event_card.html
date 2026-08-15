@@ -1,0 +1,45 @@
+<div class="glass-card event-card h-100">
+  <a href="{{ url_for('event_detail', event_id=e.id) }}" class="text-decoration-none text-reset">
+    <div class="img-wrap">
+      <img src="{{ e.image }}" alt="{{ e.title }}" loading="lazy">
+      <span class="cat-badge">{{ e.category }}</span>
+      {% if 'premium' in (e.ticket_types|map(attribute='name')|join(' ')|lower) %}
+      <span class="premium-badge">PREMIUM ⭐</span>
+      {% endif %}
+      {% if e.is_new %}
+      <span class="new-badge">NEW</span>
+      {% endif %}
+    </div>
+  </a>
+  <button class="wishlist-btn {% if current_user.is_authenticated and e in (current_user.wishlist_items | map(attribute='event') | list) %}active{% endif %}"
+          data-event-id="{{ e.id }}" {% if not current_user.is_authenticated %}data-auth-required="true"{% endif %}>
+    <i class="{% if current_user.is_authenticated and e in (current_user.wishlist_items | map(attribute='event') | list) %}fa-solid{% else %}fa-regular{% endif %} fa-heart"></i>
+  </button>
+  <div class="body">
+    <a href="{{ url_for('event_detail', event_id=e.id) }}" class="text-decoration-none text-reset">
+      <h5 class="mb-2">{{ e.title }}</h5>
+    </a>
+    <div class="d-flex flex-column gap-1 text-dim mb-3" style="font-size:.85rem;">
+      <span><i class="fa-regular fa-calendar me-2"></i>{{ e.date.strftime('%d %b %Y') }} · {{ e.time }}</span>
+      <span><i class="fa-solid fa-location-dot me-2"></i>{{ e.venue }}, {{ e.location }}</span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="price-tag">₹{{ '%.0f'|format(e.min_price) }}+</span>
+      {% if e.is_sold_out %}
+      <span class="seats-left low">Sold Out</span>
+      {% elif e.available_seats < 30 %}
+      <span class="seats-left low">{{ e.available_seats }} seats left</span>
+      {% else %}
+      <span class="seats-left">{{ e.available_seats }} seats available</span>
+      {% endif %}
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('event_detail', event_id=e.id) }}" class="btn btn-outline-glow btn-sm flex-fill">View Details</a>
+      {% if e.is_sold_out %}
+      <button class="btn btn-glow btn-sm flex-fill" disabled>Sold Out</button>
+      {% else %}
+      <a href="{{ url_for('event_detail', event_id=e.id) }}" class="btn btn-glow btn-sm flex-fill">Book Now</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

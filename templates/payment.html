@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Payment — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="booking-steps mb-5" data-aos="fade-up">
+      <div class="step done"><span class="dot"><i class="fa-solid fa-check"></i></span> Tickets</div>
+      <div class="connector"></div>
+      <div class="step done"><span class="dot"><i class="fa-solid fa-check"></i></span> Details</div>
+      <div class="connector"></div>
+      <div class="step active"><span class="dot">3</span> Payment</div>
+      <div class="connector"></div>
+      <div class="step"><span class="dot">4</span> Confirm</div>
+    </div>
+
+    <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h6 class="mb-0">Complete Your Payment</h6>
+        <span class="price-tag fs-5">₹{{ '%.0f'|format(total) }}</span>
+      </div>
+
+      {% if pricing.discount %}
+      <div class="glass p-3 mb-4" style="font-size:.85rem;">
+        <div class="d-flex justify-content-between text-dim mb-1"><span>Subtotal</span><span>₹{{ '%.0f'|format(pricing.subtotal) }}</span></div>
+        <div class="d-flex justify-content-between mb-1" style="color:var(--success);">
+          <span><i class="fa-solid fa-tag me-1"></i> Discount ({{ pricing.applied_coupon }})</span><span>-₹{{ '%.0f'|format(pricing.discount) }}</span>
+        </div>
+        <div class="d-flex justify-content-between text-dim mb-1"><span>Convenience Fee</span><span>₹{{ '%.0f'|format(pricing.fee) }}</span></div>
+        <hr style="border-color: var(--border);" class="my-2">
+        <div class="d-flex justify-content-between fw-bold"><span>Final Amount</span><span class="gradient-text">₹{{ '%.0f'|format(pricing.total) }}</span></div>
+      </div>
+      {% endif %}
+
+      <div class="alert-glass p-3 mb-4 text-dim" style="font-size:.82rem;">
+        <i class="fa-solid fa-shield-halved me-1"></i> Secure checkout powered by Razorpay (Test Mode).
+        UPI, Cards, Net Banking & Wallets supported.
+      </div>
+
+      <div id="paymentError" class="alert-glass p-3 mb-4 d-none" style="font-size:.85rem; border-color:#f87171;"></div>
+
+      <button id="rzpPayBtn" type="button" class="btn btn-glow w-100">
+        <i class="fa-solid fa-lock me-1"></i> Pay ₹{{ '%.0f'|format(total) }} Securely
+      </button>
+    </div>
+  </div>
+</section>
+
+<div id="processingOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background:rgba(6,7,15,0.92); z-index:2500;">
+  <div class="text-center" id="processingStep">
+    <div class="spinner-glow mx-auto mb-4"></div>
+    <h5>Processing Payment...</h5>
+    <p class="text-dim">Please don't close this window</p>
+  </div>
+  <div class="text-center d-none" id="successStep">
+    <div class="success-check mx-auto mb-4"><i class="fa-solid fa-check"></i></div>
+    <h5>Payment Successful</h5>
+    <p class="text-dim">Redirecting to your ticket...</p>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  // Order was created server-side; amount/order_id can't be tampered with from here.
+  window.EVENTIFY_RAZORPAY = {
+    keyId: {{ razorpay_key_id | tojson }},
+    orderId: {{ razorpay_order_id | tojson }},
+    amount: {{ razorpay_amount | tojson }},
+    eventTitle: {{ event.title | tojson }},
+    customerName: {{ current_user.name | tojson }},
+    customerEmail: {{ current_user.email | tojson }},
+    customerPhone: {{ (current_user.phone or "") | tojson }},
+    verifyUrl: {{ url_for('payment_verify') | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}{{ 'Edit' if event else 'Add' }} Event — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4" data-aos="fade-up">
+  <h2 class="section-title">{{ 'Edit Event' if event else 'Add New Event' }}</h2>
+  <p class="text-dim">{{ 'Update event information below' if event else 'Fill in the details to publish a new event' }}</p>
+</div>
+
+<div class="glass-card p-4 p-md-5" data-aos="fade-up">
+  <form method="post">
+    <div class="row g-3">
+      <div class="col-md-8">
+        <label class="form-label-glass">Event Name</label>
+        <input type="text" name="title" required value="{{ event.title if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Category</label>
+        <select name="category_id" required class="form-select form-select-glass">
+          {% for c in categories %}
+          <option value="{{ c.id }}" {% if event and event.category_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label-glass">Description</label>
+        <textarea name="description" required rows="3" class="form-control form-control-glass">{{ event.description if event else '' }}</textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Location (City)</label>
+        <input type="text" name="location" required value="{{ event.location if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Venue</label>
+        <input type="text" name="venue" required value="{{ event.venue if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Date</label>
+        <input type="date" name="date" required value="{{ event.date.isoformat() if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Time</label>
+        <input type="text" name="time" required placeholder="e.g. 6:00 PM" value="{{ event.time if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Organizer</label>
+        <input type="text" name="organizer" required value="{{ event.organizer if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-8">
+        <label class="form-label-glass">Image URL</label>
+        <input type="url" name="image" value="{{ event.image if event else '' }}" placeholder="https://..." class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Total Seats</label>
+        <input type="number" name="total_seats" min="1" required value="{{ event.total_seats if event else 100 }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-12">
+        <div class="form-check">
+          <input type="checkbox" name="is_trending" class="form-check-input" id="trendingCheck" {% if event and event.is_trending %}checked{% endif %}>
+          <label class="form-check-label text-dim" for="trendingCheck">Mark as trending event</label>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-4" style="border-color: var(--border);">
+    <h6 class="mb-3">Ticket Types & Pricing</h6>
+    <div id="ticketRows" class="d-flex flex-column gap-2 mb-3">
+      {% if event and event.ticket_types %}
+        {% for tt in event.ticket_types %}
+        <div class="row g-2 ticket-type-row">
+          <div class="col-6"><input type="text" name="ticket_name[]" value="{{ tt.name }}" required class="form-control form-control-glass" placeholder="Ticket name"></div>
+          <div class="col-5"><input type="number" name="ticket_price[]" value="{{ tt.price }}" step="0.01" required class="form-control form-control-glass" placeholder="Price"></div>
+          <div class="col-1"><button type="button" class="btn btn-ghost-sm remove-row w-100">✕</button></div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="row g-2 ticket-type-row">
+          <div class="col-6"><input type="text" name="ticket_name[]" value="Regular" required class="form-control form-control-glass" placeholder="Ticket name"></div>
+          <div class="col-5"><input type="number" name="ticket_price[]" value="499" step="0.01" required class="form-control form-control-glass" placeholder="Price"></div>
+          <div class="col-1"><button type="button" class="btn btn-ghost-sm remove-row w-100">✕</button></div>
+        </div>
+      {% endif %}
+    </div>
+    <button type="button" id="addTicketRow" class="btn btn-outline-glow btn-sm mb-4"><i class="fa-solid fa-plus me-1"></i> Add Ticket Type</button>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-glow">{{ 'Save Changes' if event else 'Publish Event' }}</button>
+      <a href="{{ url_for('admin_events') }}" class="btn btn-outline-glow">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelector('#addTicketRow').addEventListener('click', () => {
+  const row = document.createElement('div');
+  row.className = 'row g-2 ticket-type-row';
+  row.innerHTML = `
+    <div class="col-6"><input type="text" name="ticket_name[]" required class="form-control form-control-glass" placeholder="Ticket name"></div>
+    <div class="col-5"><input type="number" name="ticket_price[]" step="0.01" required class="form-control form-control-glass" placeholder="Price"></div>
+    <div class="col-1"><button type="button" class="btn btn-ghost-sm remove-row w-100">✕</button></div>`;
+  document.querySelector('#ticketRows').appendChild(row);
+});
+document.querySelector('#ticketRows').addEventListener('click', (e) => {
+  if (e.target.classList.contains('remove-row')) e.target.closest('.ticket-type-row').remove();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Your Details — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:760px;">
+    <div class="booking-steps mb-5" data-aos="fade-up">
+      <div class="step done"><span class="dot"><i class="fa-solid fa-check"></i></span> Tickets</div>
+      <div class="connector"></div>
+      <div class="step active"><span class="dot">2</span> Details</div>
+      <div class="connector"></div>
+      <div class="step"><span class="dot">3</span> Payment</div>
+      <div class="connector"></div>
+      <div class="step"><span class="dot">4</span> Confirm</div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-7">
+        {% if meal_offer.eligible %}
+        <div class="glass-card offer-card p-4 mb-4" data-aos="fade-up">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="fs-4">🎁</span>
+            <h6 class="mb-0">{{ meal_offer.label }}</h6>
+          </div>
+          <p class="text-dim mb-3" style="font-size:.85rem;">
+            This is a free promotional add-on — it doesn't change your ticket price. Pick a meal below.
+          </p>
+          <div class="d-flex flex-wrap gap-2">
+            {% set meal_emojis = {"Pizza": "🍕", "Burger": "🍔", "Sandwich": "🥪", "Fries": "🍟", "Soft Drink": "🥤", "Snacks": "🍿"} %}
+            {% for meal in meal_options %}
+            <label class="meal-option {% if selected_meal == meal %}selected{% endif %}">
+              <input type="radio" name="meal_choice" value="{{ meal }}" form="detailsForm" {% if selected_meal == meal %}checked{% endif %} class="d-none">
+              <span>{{ meal_emojis.get(meal, "🍽️") }} {{ meal }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+          <h6 class="mb-4">Customer Details</h6>
+          <form method="post" id="detailsForm">
+            <div class="mb-3">
+              <label class="form-label-glass">Full Name</label>
+              <input type="text" name="name" required value="{{ current_user.name }}" class="form-control form-control-glass">
+            </div>
+            <div class="mb-3">
+              <label class="form-label-glass">Email</label>
+              <input type="email" name="email" required value="{{ current_user.email }}" class="form-control form-control-glass">
+            </div>
+            <div class="mb-4">
+              <label class="form-label-glass">Phone</label>
+              <input type="tel" name="phone" required value="{{ current_user.phone or '' }}" class="form-control form-control-glass">
+            </div>
+            <button type="submit" class="btn btn-glow w-100">Continue to Payment <i class="fa-solid fa-arrow-right ms-1"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="glass-card p-4" data-aos="fade-left">
+          <h6 class="mb-3">Order Summary</h6>
+          <img src="{{ event.image }}" class="rounded-3 w-100 mb-3" style="height:120px;object-fit:cover;">
+          <h6 class="mb-1">{{ event.title }}</h6>
+          <p class="text-faint mb-3" style="font-size:.82rem;">{{ event.date.strftime('%d %b %Y') }} · {{ event.venue }}</p>
+          {% for l in lines %}
+          <div class="d-flex justify-content-between text-dim mb-1" style="font-size:.9rem;">
+            <span>{{ l.name }} × {{ l.qty }}</span><span>₹{{ '%.0f'|format(l.total) }}</span>
+          </div>
+          {% endfor %}
+          <hr style="border-color: var(--border);">
+
+          <div class="mb-3">
+            <div id="couponAppliedRow" class="d-flex justify-content-between align-items-center mb-2 {% if not pricing.applied_coupon %}d-none{% endif %}">
+              <span class="text-dim" style="font-size:.85rem;"><i class="fa-solid fa-tag me-1 text-info"></i> <span id="couponCodeLabel">{{ pricing.applied_coupon or '' }}</span></span>
+              <button type="button" id="removeCouponBtn" class="btn btn-ghost-sm py-0 px-2" style="font-size:.78rem;">Remove</button>
+            </div>
+            <div id="couponInputRow" class="d-flex gap-2 {% if pricing.applied_coupon %}d-none{% endif %}">
+              <input type="text" id="couponCodeInput" class="form-control form-control-glass" placeholder="Coupon code" style="font-size:.85rem;">
+              <button type="button" id="applyCouponBtn" class="btn btn-outline-glow btn-sm" data-event-id="{{ event.id }}">Apply</button>
+            </div>
+            <div id="couponMessage" class="mt-2 d-none" style="font-size:.8rem;"></div>
+          </div>
+
+          <div class="d-flex justify-content-between text-dim mb-1"><span>Subtotal</span><span id="pxSubtotal">₹{{ '%.0f'|format(pricing.subtotal) }}</span></div>
+          <div id="pxDiscountRow" class="d-flex justify-content-between mb-1 {% if not pricing.discount %}d-none{% endif %}" style="color:var(--success);">
+            <span>Discount <span id="pxDiscountCode">{% if pricing.applied_coupon %}({{ pricing.applied_coupon }}){% endif %}</span></span><span id="pxDiscount">-₹{{ '%.0f'|format(pricing.discount) }}</span>
+          </div>
+          <div class="d-flex justify-content-between text-dim mb-2"><span>Convenience Fee (5%)</span><span id="pxFee">₹{{ '%.0f'|format(pricing.fee) }}</span></div>
+          <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span id="pxTotal" class="gradient-text">₹{{ '%.0f'|format(pricing.total) }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

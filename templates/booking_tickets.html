@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Select Tickets — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:760px;">
+    <div class="booking-steps mb-5" data-aos="fade-up">
+      <div class="step active"><span class="dot">1</span> Tickets</div>
+      <div class="connector"></div>
+      <div class="step"><span class="dot">2</span> Details</div>
+      <div class="connector"></div>
+      <div class="step"><span class="dot">3</span> Payment</div>
+      <div class="connector"></div>
+      <div class="step"><span class="dot">4</span> Confirm</div>
+    </div>
+
+    <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+      <div class="d-flex gap-3 mb-4 pb-4" style="border-bottom:1px solid var(--border);">
+        <img src="{{ event.image }}" class="rounded-3" style="width:90px;height:90px;object-fit:cover;">
+        <div>
+          <h5 class="mb-1">{{ event.title }}</h5>
+          <p class="text-dim mb-0" style="font-size:.85rem;"><i class="fa-regular fa-calendar me-1"></i>{{ event.date.strftime('%d %b %Y') }} · {{ event.venue }}, {{ event.location }}</p>
+        </div>
+      </div>
+
+      <h6 class="mb-3">Select Ticket Type & Quantity</h6>
+      <div id="availableSeats" data-seats="{{ event.available_seats }}"></div>
+
+      <form method="post">
+        <div class="d-flex flex-column gap-3 mb-4">
+          {% for tt in event.ticket_types %}
+          <div class="glass p-3 ticket-row {% if tt.is_streaming %}ticket-row-stream{% endif %}" data-price="{{ tt.price }}">
+            <div class="row align-items-center g-2">
+              <div class="col-6 col-md-5">
+                <h6 class="mb-0">
+                  {% if tt.is_streaming %}<i class="fa-solid fa-satellite-dish text-info me-1"></i>{% endif %}
+                  {{ tt.name }}
+                  {% if 'premium' in tt.name|lower %}<span class="premium-badge-inline">PREMIUM ⭐</span>{% endif %}
+                </h6>
+                <span class="text-faint" style="font-size:.8rem;">
+                  {% if tt.is_streaming %}Watch from anywhere · ₹{{ '%.0f'|format(tt.price) }}{% else %}₹{{ '%.0f'|format(tt.price) }} per ticket{% endif %}
+                </span>
+              </div>
+              <div class="col-6 col-md-3 d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-ghost-sm qty-minus px-3">−</button>
+                <input type="number" name="qty_{{ tt.id }}" class="form-control form-control-glass qty-input text-center" value="0" min="0" style="width:60px;">
+                <button type="button" class="btn btn-ghost-sm qty-plus px-3">+</button>
+              </div>
+              <div class="col-12 col-md-4 text-md-end price-tag line-total mt-2 mt-md-0">₹0</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div id="seatWarning" class="alert alert-glass text-warning d-none mb-3">
+          <i class="fa-solid fa-triangle-exclamation me-1"></i> Selected quantity exceeds available seats ({{ event.available_seats }} left).
+        </div>
+
+        <div class="glass p-3 mb-4">
+          <div class="d-flex justify-content-between text-dim mb-2"><span>Subtotal</span><span id="subtotalAmount">₹0</span></div>
+          <div class="d-flex justify-content-between text-dim mb-2"><span>Convenience Fee (5%)</span><span id="feeAmount">₹0</span></div>
+          <hr style="border-color: var(--border);">
+          <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span id="totalAmount" class="gradient-text">₹0</span></div>
+        </div>
+
+        <button type="submit" id="proceedBtn" class="btn btn-glow w-100" disabled>Continue to Details <i class="fa-solid fa-arrow-right ms-1"></i></button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

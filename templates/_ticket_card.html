@@ -1,0 +1,48 @@
+<div class="ticket-card" data-aos="fade-up">
+  <div class="ticket-top text-white">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <span class="text-mono" style="font-size:.75rem;opacity:.85;">EVENTIFY DIGITAL TICKET</span>
+        <h4 class="mb-0 mt-1">{{ booking.event.title }}</h4>
+      </div>
+      <span class="badge-status confirmed" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff;">{{ booking.status|capitalize }}</span>
+    </div>
+    <div class="row mt-4 g-3" style="font-size:.85rem;">
+      <div class="col-6"><span style="opacity:.7;">Date</span><br>{{ booking.event.date.strftime('%d %b %Y') }}</div>
+      <div class="col-6"><span style="opacity:.7;">Time</span><br>{{ booking.event.time }}</div>
+      <div class="col-6"><span style="opacity:.7;">Venue</span><br>{{ booking.event.venue }}, {{ booking.event.location }}</div>
+      <div class="col-6"><span style="opacity:.7;">Booking ID</span><br class="text-mono">{{ booking.booking_ref }}</div>
+    </div>
+  </div>
+  <div class="ticket-perf"><div class="circle l"></div><div class="circle r"></div></div>
+  <div class="ticket-bottom">
+    <div class="row g-3 align-items-center">
+      <div class="col-8">
+        <div class="mb-2"><span class="text-faint" style="font-size:.78rem;">Ticket Holder</span><br><strong>{{ booking.customer_name }}</strong></div>
+        <div class="mb-2"><span class="text-faint" style="font-size:.78rem;">Ticket Type / Qty</span><br>
+          {% for item in booking.items %}<span class="text-dim">{{ item.ticket_type }} × {{ item.quantity }}</span>{% if not loop.last %}, {% endif %}{% endfor %}
+        </div>
+        {% if booking.coupon_code %}
+        <div class="mb-2"><span class="text-faint" style="font-size:.78rem;">Coupon Applied</span><br>
+          <span class="text-dim"><i class="fa-solid fa-tag me-1"></i>{{ booking.coupon_code }} (-₹{{ '%.0f'|format(booking.discount_amount) }})</span>
+        </div>
+        {% endif %}
+        {% if booking.meal_choice %}
+        <div class="mb-2"><span class="text-faint" style="font-size:.78rem;">Free Meal 🎁</span><br>
+          <span class="text-dim">{{ booking.meal_choice }}</span>
+        </div>
+        {% endif %}
+        {% if booking.original_user_id and booking.original_user_id != booking.user_id %}
+        <div class="mb-2"><span class="text-faint" style="font-size:.78rem;">Ownership</span><br>
+          <span class="text-dim"><i class="fa-solid fa-right-left me-1"></i>Transferred from {{ booking.original_user.name if booking.original_user else 'previous owner' }} — current owner: {{ booking.user.name }}</span>
+        </div>
+        {% endif %}
+        <div><span class="text-faint" style="font-size:.78rem;">Total Paid</span><br><span class="price-tag fs-5">₹{{ '%.0f'|format(booking.total_amount) }}</span></div>
+      </div>
+      <div class="col-4 text-center">
+        <img src="{{ qr }}" alt="QR Code" style="width:100%;max-width:110px;border-radius:10px;background:#fff;padding:6px;">
+        <span class="text-faint d-block mt-1" style="font-size:.7rem;">Scan at entry</span>
+      </div>
+    </div>
+  </div>
+</div>

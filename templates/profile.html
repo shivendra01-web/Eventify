@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}My Profile — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">My Profile</h2>
+      <p class="text-dim">Manage your account information</p>
+    </div>
+    <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="rounded-circle d-flex align-items-center justify-content-center fs-3 fw-bold" style="width:70px;height:70px;background:var(--grad-primary);">
+          {{ current_user.name[0] }}
+        </div>
+        <div>
+          <h5 class="mb-0">{{ current_user.name }}</h5>
+          <span class="text-faint">{{ current_user.email }}</span>
+        </div>
+      </div>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label-glass">Full Name</label>
+          <input type="text" name="name" value="{{ current_user.name }}" class="form-control form-control-glass">
+        </div>
+        <div class="mb-3">
+          <label class="form-label-glass">Email</label>
+          <input type="email" value="{{ current_user.email }}" class="form-control form-control-glass" disabled>
+        </div>
+        <div class="mb-4">
+          <label class="form-label-glass">Phone</label>
+          <input type="tel" name="phone" value="{{ current_user.phone or '' }}" class="form-control form-control-glass">
+        </div>
+        <button type="submit" class="btn btn-glow">Save Changes</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
