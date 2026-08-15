@@ -7,3 +7,4 @@ Pillow==10.4.0
 razorpay==1.4.2
 python-dotenv==1.0.1
 waitress
+setuptools
