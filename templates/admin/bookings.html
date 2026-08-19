@@ -1,0 +1,36 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manage Bookings — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4" data-aos="fade-up">
+  <h2 class="section-title">Manage Bookings</h2>
+  <p class="text-dim mb-0">{{ bookings|length }} booking(s) on the platform</p>
+</div>
+
+<div class="glass-card p-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Booking ID</th><th>User</th><th>Event</th><th>Tickets</th><th>Access</th><th>Amount</th><th>Booked On</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for b in bookings %}
+        <tr>
+          <td class="text-mono">{{ b.booking_ref }}</td>
+          <td>{{ b.user.name }}</td>
+          <td>{{ b.event.title }}</td>
+          <td>{{ b.total_tickets }}</td>
+          <td style="font-size:.78rem;">
+            {% if b.has_physical_item %}<span class="text-dim"><i class="fa-solid fa-ticket me-1"></i>Physical</span>{% endif %}
+            {% if b.has_physical_item and b.has_streaming_item %} · {% endif %}
+            {% if b.has_streaming_item %}<span class="text-info"><i class="fa-solid fa-video me-1"></i>Online</span>{% endif %}
+          </td>
+          <td>₹{{ '%.0f'|format(b.total_amount) }}</td>
+          <td>{{ b.booking_date.strftime('%d %b %Y') }}</td>
+          <td><span class="badge-status {{ b.status }}">{{ b.status|capitalize }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-dim py-5">No bookings found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

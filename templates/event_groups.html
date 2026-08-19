@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Plan With Friends — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-4" data-aos="fade-up">
+      <a href="{{ url_for('event_detail', event_id=event.id) }}" class="text-dim" style="font-size:.85rem;"><i class="fa-solid fa-arrow-left me-1"></i> {{ event.title }}</a>
+      <h2 class="section-title mt-2 mb-0">Plan With Friends</h2>
+      <p class="text-dim mb-0">Create or join a group to coordinate, poll, and go together.</p>
+    </div>
+
+    <div class="glass-card p-4 mb-4" data-aos="fade-up">
+      <form method="post" class="d-flex gap-2">
+        <input type="text" name="name" required maxlength="80" placeholder="e.g. Music Night Gang 🎵" class="form-control form-control-glass">
+        <button type="submit" class="btn btn-glow text-nowrap">Create Group</button>
+      </form>
+    </div>
+
+    <div class="d-flex flex-column gap-3">
+      {% for g in groups %}
+      <div class="glass-card p-3 d-flex align-items-center justify-content-between" data-aos="fade-up">
+        <div>
+          <a href="{{ url_for('event_group_detail', group_id=g.id) }}" class="text-white text-decoration-none fw-semibold">{{ g.name }}</a>
+          <div class="text-faint" style="font-size:.78rem;">{{ g.member_count }} member{{ 's' if g.member_count != 1 else '' }} · by {{ g.creator.name }}</div>
+        </div>
+        {% if g.is_member(current_user) %}
+        <a href="{{ url_for('event_group_detail', group_id=g.id) }}" class="btn btn-outline-glow btn-sm">Open</a>
+        {% else %}
+        <form method="post" action="{{ url_for('event_group_join', group_id=g.id) }}">
+          <button type="submit" class="btn btn-glow btn-sm">Join</button>
+        </form>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="glass-card p-5 text-center text-dim" data-aos="fade-up">No groups yet — start one above.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

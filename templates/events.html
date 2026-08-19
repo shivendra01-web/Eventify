@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Explore Events — Eventify{% endblock %}
+{% block content %}
+<section class="section" style="padding-top:150px;">
+  <div class="container">
+    <div class="mb-5" data-aos="fade-up">
+      <div class="section-label">Discover</div>
+      <h2 class="section-title">Explore Events</h2>
+    </div>
+
+    <div class="glass p-4 mb-5" data-aos="fade-up">
+      <form method="get" class="row g-3 align-items-end">
+        <div class="col-lg-2">
+          <label class="form-label-glass">Search</label>
+          <input type="text" name="q" value="{{ q }}" class="form-control form-control-glass" placeholder="Event name...">
+        </div>
+        <div class="col-lg-2">
+          <label class="form-label-glass">Location</label>
+          <input type="text" name="location" value="{{ location }}" class="form-control form-control-glass" placeholder="City">
+        </div>
+        <div class="col-lg-2">
+          <label class="form-label-glass">Category</label>
+          <select name="category" class="form-select form-select-glass">
+            <option value="">All</option>
+            {% for c in categories %}
+            <option value="{{ c.name }}" {% if c.name==category %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-lg-2">
+          <label class="form-label-glass">Date</label>
+          <input type="date" name="date" value="{{ date_filter }}" class="form-control form-control-glass">
+        </div>
+        <div class="col-lg-2">
+          <label class="form-label-glass">Max Price (₹)</label>
+          <input type="number" name="max_price" value="{{ max_price }}" min="0" step="50" class="form-control form-control-glass" placeholder="Any">
+        </div>
+        <div class="col-lg-2">
+          <label class="form-label-glass">Sort By</label>
+          <select name="sort" class="form-select form-select-glass">
+            <option value="newest" {% if sort=='newest' %}selected{% endif %}>Newest</option>
+            <option value="price_low" {% if sort=='price_low' %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_high" {% if sort=='price_high' %}selected{% endif %}>Price: High to Low</option>
+            <option value="popular" {% if sort=='popular' %}selected{% endif %}>Popular</option>
+          </select>
+        </div>
+        <div class="col-lg-12 d-flex gap-2">
+          <button type="submit" class="btn btn-glow flex-fill flex-lg-grow-0 px-4"><i class="fa-solid fa-filter me-1"></i> Apply Filters</button>
+          <a href="{{ url_for('events') }}" class="btn btn-outline-glow">Reset</a>
+        </div>
+      </form>
+    </div>
+
+    <p class="text-dim mb-4">{{ events|length }} event{{ 's' if events|length != 1 }} found</p>
+
+    {% if events %}
+    <div class="row g-4">
+      {% for e in events %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ (loop.index0 % 6) * 60 }}">
+        {% include "_event_card.html" %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" data-aos="fade-up">
+      <div class="icon-wrap"><i class="fa-solid fa-calendar-xmark"></i></div>
+      <h4 class="mb-2">No events found</h4>
+      <p class="text-dim mb-4">Try adjusting your search or filters to find what you're looking for.</p>
+      <a href="{{ url_for('events') }}" class="btn btn-glow">Clear Filters</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

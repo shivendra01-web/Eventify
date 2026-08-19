@@ -1,0 +1,56 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manage Organizers — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4" data-aos="fade-up">
+  <h2 class="section-title">Manage Organizers</h2>
+  <p class="text-dim mb-0">{{ organizers|length }} organizer account(s)</p>
+</div>
+
+<div class="glass-card p-4 mb-4" data-aos="fade-up">
+  <h6 class="mb-3">Create Organizer Account</h6>
+  <form method="post" action="{{ url_for('admin_organizer_new') }}" class="row g-2 align-items-end">
+    <div class="col-md-3"><input type="text" name="name" required placeholder="Full name" class="form-control form-control-glass"></div>
+    <div class="col-md-4"><input type="email" name="email" required placeholder="Email" class="form-control form-control-glass"></div>
+    <div class="col-md-3"><input type="password" name="password" required placeholder="Temporary password" class="form-control form-control-glass"></div>
+    <div class="col-md-2"><button type="submit" class="btn btn-glow w-100">Create</button></div>
+  </form>
+  <p class="text-faint mt-2 mb-0" style="font-size:.78rem;">Share these credentials with the organizer — they log in at <span class="text-mono">/organizer/login</span>.</p>
+</div>
+
+<div class="glass-card p-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Events Managed</th><th>Verified</th><th>Joined</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for org in organizers %}
+        <tr>
+          <td class="text-mono">#{{ org.id }}</td>
+          <td>
+            {% if org.username %}<a href="{{ url_for('organizer_public_profile', username=org.username) }}" class="text-white text-decoration-none">{{ org.name }}</a>
+            {% else %}{{ org.name }}{% endif %}
+          </td>
+          <td>{{ org.email }}</td>
+          <td>{{ org.organizer_events|length }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_organizer_toggle_verified', user_id=org.id) }}">
+              <button type="submit" class="badge-status {{ 'active' if org.is_verified else 'disabled' }}" style="border:none;cursor:pointer;">
+                {{ 'Verified ✓' if org.is_verified else '—' }}
+              </button>
+            </form>
+          </td>
+          <td>{{ org.created_at.strftime('%d %b %Y') }}</td>
+          <td><span class="badge-status {{ org.status }}">{{ org.status|capitalize }}</span></td>
+          <td class="text-end">
+            <form method="post" action="{{ url_for('admin_user_toggle', user_id=org.id) }}">
+              <button type="submit" class="btn btn-ghost-sm">{{ 'Disable' if org.status=='active' else 'Activate' }}</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-dim py-5">No organizer accounts yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

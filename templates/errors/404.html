@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found — Eventify{% endblock %}
+{% block content %}
+<section class="d-flex align-items-center" style="min-height:100vh;">
+  <div class="container">
+    <div class="empty-state" data-aos="zoom-in">
+      <div class="icon-wrap" style="width:110px;height:110px;font-size:2.5rem;">🎫</div>
+      <h1 class="display-font gradient-text mb-2" style="font-size:4rem;">404</h1>
+      <h4 class="mb-2">This event seems to have ended</h4>
+      <p class="text-dim mb-4">The page you're looking for doesn't exist or may have been moved.</p>
+      <a href="{{ url_for('home') }}" class="btn btn-glow">Back to Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

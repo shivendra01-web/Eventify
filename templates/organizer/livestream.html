@@ -1,0 +1,76 @@
+{% extends "organizer/base.html" %}
+{% block title %}Livestream — {{ event.title }}{% endblock %}
+{% block organizer_content %}
+<div class="mb-4" data-aos="fade-up">
+  <a href="{{ url_for('organizer_event_detail', event_id=event.id) }}" class="text-dim" style="font-size:.85rem;"><i class="fa-solid fa-arrow-left me-1"></i> {{ event.title }}</a>
+  <h2 class="section-title mt-2 mb-0">Livestream Management</h2>
+  <p class="text-dim mb-0">Eventify verifies who's allowed to watch — you bring the stream via your own provider.</p>
+</div>
+
+<div class="glass-card p-4 p-md-5" data-aos="fade-up">
+  <form method="post">
+    <div class="row g-3 mb-2">
+      <div class="col-md-4">
+        <label class="form-label-glass">Event Type</label>
+        <select name="event_type" id="eventTypeSelect" class="form-select form-select-glass">
+          <option value="physical" {% if event.event_type=='physical' %}selected{% endif %}>Physical only (no streaming)</option>
+          <option value="online" {% if event.event_type=='online' %}selected{% endif %}>Online only</option>
+          <option value="hybrid" {% if event.event_type=='hybrid' %}selected{% endif %}>Hybrid (physical + online)</option>
+        </select>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label-glass">Livestream URL</label>
+        <input type="url" name="streaming_url" value="{{ event.streaming_url or '' }}" placeholder="https://your-streaming-provider.com/..." class="form-control form-control-glass">
+        <span class="text-faint" style="font-size:.78rem;">Never shown publicly — only revealed to a verified ticket holder once the event is live.</span>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Access Start (optional)</label>
+        <input type="datetime-local" name="access_start" class="form-control form-control-glass"
+               value="{{ event.access_start.strftime('%Y-%m-%dT%H:%M') if event.access_start else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Access End (optional)</label>
+        <input type="datetime-local" name="access_end" class="form-control form-control-glass"
+               value="{{ event.access_end.strftime('%Y-%m-%dT%H:%M') if event.access_end else '' }}">
+      </div>
+      <div class="col-12">
+        <span class="text-faint" style="font-size:.78rem;">If left blank, the stream is treated as live for the whole event date instead of an exact window.</span>
+      </div>
+    </div>
+
+    <hr class="my-4" style="border-color: var(--border);">
+    <h6 class="mb-3">Which ticket types include online access?</h6>
+    <div id="streamingTicketList" class="d-flex flex-column gap-2 mb-4">
+      {% for tt in event.ticket_types %}
+      <label class="d-flex align-items-center gap-2 glass p-3">
+        <input type="checkbox" name="streaming_ticket_ids" value="{{ tt.id }}" class="form-check-input streaming-ticket-check" {% if tt.is_streaming %}checked{% endif %}>
+        <span>{{ tt.name }} — ₹{{ '%.0f'|format(tt.price) }}</span>
+      </label>
+      {% else %}
+      <p class="text-dim mb-0" style="font-size:.9rem;">No ticket types yet — add some from the event editor first.</p>
+      {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-glow">Save Livestream Settings</button>
+  </form>
+
+  <hr class="my-4" style="border-color: var(--border);">
+  <div class="d-flex gap-4" style="font-size:.9rem;">
+    <span class="text-dim"><i class="fa-solid fa-video me-1 text-info"></i> {{ event.online_tickets_sold }} online tickets sold</span>
+    <span class="text-dim"><i class="fa-solid fa-indian-rupee-sign me-1 text-info"></i> ₹{{ '%.0f'|format(event.online_revenue) }} online revenue</span>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const eventTypeSelect = document.querySelector('#eventTypeSelect');
+function syncTicketVisibility() {
+  const isPhysical = eventTypeSelect.value === 'physical';
+  document.querySelectorAll('.streaming-ticket-check').forEach((cb) => { cb.closest('label').style.opacity = isPhysical ? '0.4' : '1'; });
+}
+if (eventTypeSelect) {
+  eventTypeSelect.addEventListener('change', syncTicketVisibility);
+  syncTicketVisibility();
+}
+</script>
+{% endblock %}

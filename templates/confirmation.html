@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed — Eventify{% endblock %}
+{% block content %}
+<div id="confettiOnLoad"></div>
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="text-center mb-4" data-aos="zoom-in">
+      <div class="success-check mx-auto mb-3"><i class="fa-solid fa-check"></i></div>
+      <h2 class="section-title">Booking Confirmed 🎉</h2>
+      <p class="text-dim">Your tickets are ready. See you at the event!</p>
+    </div>
+
+    {% include "_ticket_card.html" %}
+
+    <div class="d-flex gap-3 justify-content-center flex-wrap mt-4" data-aos="fade-up">
+      <a href="{{ url_for('ticket', booking_id=booking.id) }}" class="btn btn-outline-glow"><i class="fa-solid fa-ticket me-1"></i> View Ticket</a>
+      <a href="{{ url_for('ticket', booking_id=booking.id) }}" class="btn btn-outline-glow" onclick="window.print(); return false;"><i class="fa-solid fa-download me-1"></i> Download Ticket</a>
+      <a href="{{ url_for('dashboard') }}" class="btn btn-glow"><i class="fa-solid fa-gauge me-1"></i> Go to Dashboard</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+{% endblock %}

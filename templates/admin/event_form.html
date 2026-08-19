@@ -1,0 +1,206 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}{{ 'Edit' if event else 'Add' }} Event — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4" data-aos="fade-up">
+  <h2 class="section-title">{{ 'Edit Event' if event else 'Add New Event' }}</h2>
+  <p class="text-dim">{{ 'Update event information below' if event else 'Fill in the details to publish a new event' }}</p>
+</div>
+
+<div class="glass-card p-4 p-md-5" data-aos="fade-up">
+  <form method="post">
+    <div class="row g-3">
+      <div class="col-md-8">
+        <label class="form-label-glass">Event Name</label>
+        <input type="text" name="title" required value="{{ event.title if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Category</label>
+        <select name="category_id" required class="form-select form-select-glass">
+          {% for c in categories %}
+          <option value="{{ c.id }}" {% if event and event.category_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label-glass">Description</label>
+        <textarea name="description" required rows="3" class="form-control form-control-glass">{{ event.description if event else '' }}</textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Location (City)</label>
+        <input type="text" name="location" required value="{{ event.location if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Venue</label>
+        <input type="text" name="venue" required value="{{ event.venue if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Date</label>
+        <input type="date" name="date" required value="{{ event.date.isoformat() if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Time</label>
+        <input type="text" name="time" required placeholder="e.g. 6:00 PM" value="{{ event.time if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Organizer (display name)</label>
+        <input type="text" name="organizer" required value="{{ event.organizer if event else '' }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-8">
+        <label class="form-label-glass">Assign Organizer Account (optional)</label>
+        <select name="organizer_user_id" class="form-select form-select-glass">
+          <option value="">— Unassigned (admin-managed) —</option>
+          {% for org in organizers %}
+          <option value="{{ org.id }}" {% if event and event.organizer_user_id==org.id %}selected{% endif %}>{{ org.name }} ({{ org.email }})</option>
+          {% endfor %}
+        </select>
+        <span class="text-faint" style="font-size:.78rem;">Only accounts with the Organizer role appear here — gives that account access to manage this event's livestream from their own portal.</span>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label-glass">Image URL</label>
+        <input type="url" name="image" value="{{ event.image if event else '' }}" placeholder="https://..." class="form-control form-control-glass">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Total Seats</label>
+        <input type="number" name="total_seats" min="1" required value="{{ event.total_seats if event else 100 }}" class="form-control form-control-glass">
+      </div>
+      <div class="col-md-3">
+        <div class="form-check mt-4">
+          <input type="checkbox" name="parking_available" class="form-check-input" id="parkingCheck" {% if event and event.parking_available %}checked{% endif %}>
+          <label class="form-check-label text-dim" for="parkingCheck">Parking available</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label-glass">Parking Price (₹, optional)</label>
+        <input type="number" name="parking_price" min="0" step="0.01" value="{{ event.parking_price if event and event.parking_price else '' }}"
+               placeholder="Leave blank if free" class="form-control form-control-glass">
+      </div>
+      <div class="col-12">
+        <label class="form-label-glass">Parking Info (optional)</label>
+        <input type="text" name="parking_info" maxlength="300" value="{{ event.parking_info if event and event.parking_info else '' }}"
+               placeholder="e.g. Enter from Gate 2, valet available" class="form-control form-control-glass">
+      </div>
+      <div class="col-12 d-flex gap-4">
+        <div class="form-check">
+          <input type="checkbox" name="is_trending" class="form-check-input" id="trendingCheck" {% if event and event.is_trending %}checked{% endif %}>
+          <label class="form-check-label text-dim" for="trendingCheck">Mark as trending event</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" name="is_published" class="form-check-input" id="publishedCheck" {% if not event or event.is_published %}checked{% endif %}>
+          <label class="form-check-label text-dim" for="publishedCheck">Published (visible to customers)</label>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-4" style="border-color: var(--border);">
+    <h6 class="mb-3">Online / Livestream Access</h6>
+    <div class="row g-3 mb-2">
+      <div class="col-md-4">
+        <label class="form-label-glass">Event Type</label>
+        <select name="event_type" id="eventTypeSelect" class="form-select form-select-glass">
+          <option value="physical" {% if not event or event.event_type=='physical' %}selected{% endif %}>Physical only</option>
+          <option value="online" {% if event and event.event_type=='online' %}selected{% endif %}>Online only</option>
+          <option value="hybrid" {% if event and event.event_type=='hybrid' %}selected{% endif %}>Hybrid (physical + online)</option>
+        </select>
+      </div>
+      <div class="col-md-8">
+        <label class="form-label-glass">Livestream URL</label>
+        <input type="url" name="streaming_url" value="{{ event.streaming_url if event and event.streaming_url else '' }}"
+               placeholder="https://..." class="form-control form-control-glass">
+        <span class="text-faint" style="font-size:.78rem;">Never shown publicly — only revealed to verified ticket holders once live.</span>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Access Start (optional)</label>
+        <input type="datetime-local" name="access_start" class="form-control form-control-glass"
+               value="{{ event.access_start.strftime('%Y-%m-%dT%H:%M') if event and event.access_start else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label-glass">Access End (optional)</label>
+        <input type="datetime-local" name="access_end" class="form-control form-control-glass"
+               value="{{ event.access_end.strftime('%Y-%m-%dT%H:%M') if event and event.access_end else '' }}">
+      </div>
+      <div class="col-12">
+        <span class="text-faint" style="font-size:.78rem;">
+          If left blank, the stream is treated as live for the whole event date instead of an exact window.
+        </span>
+      </div>
+    </div>
+
+    <hr class="my-4" style="border-color: var(--border);">
+    <h6 class="mb-3">Ticket Types & Pricing</h6>
+    <p class="text-faint mb-2" style="font-size:.78rem;">Check "Online" on a ticket row to make it the streaming-access tier (only used when Event Type is Online or Hybrid).</p>
+    <div id="ticketRows" class="d-flex flex-column gap-2 mb-3">
+      {% if event and event.ticket_types %}
+        {% for tt in event.ticket_types %}
+        <div class="row g-2 align-items-center ticket-type-row">
+          <div class="col-5"><input type="text" name="ticket_name[]" value="{{ tt.name }}" required class="form-control form-control-glass" placeholder="Ticket name"></div>
+          <div class="col-4"><input type="number" name="ticket_price[]" value="{{ tt.price }}" step="0.01" required class="form-control form-control-glass" placeholder="Price"></div>
+          <div class="col-2 form-check ps-4">
+            <input type="checkbox" class="form-check-input streaming-check" {% if tt.is_streaming %}checked{% endif %}>
+            <input type="hidden" name="ticket_streaming[]" value="{{ '1' if tt.is_streaming else '0' }}">
+            <label class="form-check-label text-faint" style="font-size:.78rem;">Online</label>
+          </div>
+          <div class="col-1"><button type="button" class="btn btn-ghost-sm remove-row w-100">✕</button></div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="row g-2 align-items-center ticket-type-row">
+          <div class="col-5"><input type="text" name="ticket_name[]" value="Regular" required class="form-control form-control-glass" placeholder="Ticket name"></div>
+          <div class="col-4"><input type="number" name="ticket_price[]" value="499" step="0.01" required class="form-control form-control-glass" placeholder="Price"></div>
+          <div class="col-2 form-check ps-4">
+            <input type="checkbox" class="form-check-input streaming-check">
+            <input type="hidden" name="ticket_streaming[]" value="0">
+            <label class="form-check-label text-faint" style="font-size:.78rem;">Online</label>
+          </div>
+          <div class="col-1"><button type="button" class="btn btn-ghost-sm remove-row w-100">✕</button></div>
+        </div>
+      {% endif %}
+    </div>
+    <button type="button" id="addTicketRow" class="btn btn-outline-glow btn-sm mb-4"><i class="fa-solid fa-plus me-1"></i> Add Ticket Type</button>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-glow">{{ 'Save Changes' if event else 'Publish Event' }}</button>
+      <a href="{{ url_for('admin_events') }}" class="btn btn-outline-glow">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelector('#addTicketRow').addEventListener('click', () => {
+  const row = document.createElement('div');
+  row.className = 'row g-2 align-items-center ticket-type-row';
+  row.innerHTML = `
+    <div class="col-5"><input type="text" name="ticket_name[]" required class="form-control form-control-glass" placeholder="Ticket name"></div>
+    <div class="col-4"><input type="number" name="ticket_price[]" step="0.01" required class="form-control form-control-glass" placeholder="Price"></div>
+    <div class="col-2 form-check ps-4">
+      <input type="checkbox" class="form-check-input streaming-check">
+      <input type="hidden" name="ticket_streaming[]" value="0">
+      <label class="form-check-label text-faint" style="font-size:.78rem;">Online</label>
+    </div>
+    <div class="col-1"><button type="button" class="btn btn-ghost-sm remove-row w-100">✕</button></div>`;
+  document.querySelector('#ticketRows').appendChild(row);
+});
+document.querySelector('#ticketRows').addEventListener('click', (e) => {
+  if (e.target.classList.contains('remove-row')) e.target.closest('.ticket-type-row').remove();
+});
+// Keep each row's hidden ticket_streaming[] value in sync with its visible checkbox,
+// so the server sees one aligned entry per row regardless of which boxes are checked.
+document.querySelector('#ticketRows').addEventListener('change', (e) => {
+  if (e.target.classList.contains('streaming-check')) {
+    const hidden = e.target.parentElement.querySelector('input[name="ticket_streaming[]"]');
+    if (hidden) hidden.value = e.target.checked ? '1' : '0';
+  }
+});
+
+// Physical-only events don't need livestream URL / access window front-and-center.
+const eventTypeSelect = document.querySelector('#eventTypeSelect');
+function syncStreamingFieldsVisibility() {
+  const isPhysical = eventTypeSelect.value === 'physical';
+  document.querySelectorAll('.streaming-check').forEach((cb) => { cb.closest('.col-2').style.opacity = isPhysical ? '0.4' : '1'; });
+}
+if (eventTypeSelect) {
+  eventTypeSelect.addEventListener('change', syncStreamingFieldsVisibility);
+  syncStreamingFieldsVisibility();
+}
+</script>
+{% endblock %}

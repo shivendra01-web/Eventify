@@ -1,0 +1,105 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Reports Queue — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4 d-flex justify-content-between align-items-end flex-wrap gap-2" data-aos="fade-up">
+  <div>
+    <h2 class="section-title">Reports Queue</h2>
+    <p class="text-dim mb-0">Comment, review, and Say Hi reports in one place</p>
+  </div>
+  <div class="btn-group">
+    <a href="{{ url_for('admin_reports', status='pending') }}" class="btn btn-sm {{ 'btn-glow' if status_filter=='pending' else 'btn-outline-glow' }}">Pending</a>
+    <a href="{{ url_for('admin_reports', status='resolved') }}" class="btn btn-sm {{ 'btn-glow' if status_filter=='resolved' else 'btn-outline-glow' }}">Resolved</a>
+    <a href="{{ url_for('admin_reports', status='rejected') }}" class="btn btn-sm {{ 'btn-glow' if status_filter=='rejected' else 'btn-outline-glow' }}">Rejected</a>
+    <a href="{{ url_for('admin_reports', status='all') }}" class="btn btn-sm {{ 'btn-glow' if status_filter=='all' else 'btn-outline-glow' }}">All</a>
+  </div>
+</div>
+
+<h6 class="mb-3" data-aos="fade-up">Reported Comments</h6>
+<div class="glass-card p-4 mb-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Event</th><th>Comment Author</th><th>Comment</th><th>Reported By</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for r in comment_reports %}
+        <tr>
+          <td><a href="{{ url_for('event_detail', event_id=r.comment.event_id) }}#discussion" class="text-dim">{{ r.comment.event.title }}</a></td>
+          <td>{{ r.comment.user.name if not r.comment.is_deleted else '[deleted]' }}</td>
+          <td style="max-width:240px;">{{ r.comment.content if not r.comment.is_deleted else '[removed]' }}</td>
+          <td>{{ r.reporter.name }}</td>
+          <td class="text-faint" style="font-size:.8rem;">{{ r.reason or '—' }}</td>
+          <td><span class="badge-status {{ 'active' if r.status=='resolved' else ('cancelled' if r.status=='rejected' else 'disabled') }}">{{ r.status|capitalize }}</span></td>
+          <td class="text-end">
+            {% if r.status == 'pending' %}
+            <form method="post" action="{{ url_for('admin_report_comment_action', report_id=r.id, action='resolve') }}" class="d-inline" onsubmit="return confirm('Resolve this report? The comment will be removed.');">
+              <button type="submit" class="btn btn-sm btn-outline-glow">Resolve</button>
+            </form>
+            <form method="post" action="{{ url_for('admin_report_comment_action', report_id=r.id, action='reject') }}" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-ghost-sm">Reject</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-dim py-4">No comment reports</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h6 class="mb-3" data-aos="fade-up">Reported Reviews</h6>
+<div class="glass-card p-4 mb-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Event</th><th>Review Author</th><th>Review</th><th>Reported By</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for r in review_reports %}
+        <tr>
+          <td><a href="{{ url_for('event_detail', event_id=r.review.event_id) }}#reviews" class="text-dim">{{ r.review.event.title }}</a></td>
+          <td>{{ r.review.user.name if not r.review.is_deleted else '[deleted]' }}</td>
+          <td style="max-width:240px;">{{ r.review.content if not r.review.is_deleted else '[removed]' }}</td>
+          <td>{{ r.reporter.name }}</td>
+          <td class="text-faint" style="font-size:.8rem;">{{ r.reason or '—' }}</td>
+          <td><span class="badge-status {{ 'active' if r.status=='resolved' else ('cancelled' if r.status=='rejected' else 'disabled') }}">{{ r.status|capitalize }}</span></td>
+          <td class="text-end">
+            {% if r.status == 'pending' %}
+            <form method="post" action="{{ url_for('admin_report_review_action', report_id=r.id, action='resolve') }}" class="d-inline" onsubmit="return confirm('Resolve this report? The review will be removed.');">
+              <button type="submit" class="btn btn-sm btn-outline-glow">Resolve</button>
+            </form>
+            <form method="post" action="{{ url_for('admin_report_review_action', report_id=r.id, action='reject') }}" class="d-inline">
+              <button type="submit" class="btn btn-sm btn-ghost-sm">Reject</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-dim py-4">No review reports</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h6 class="mb-3" data-aos="fade-up">Reported Say Hi Messages</h6>
+<div class="glass-card p-4" data-aos="fade-up">
+  <p class="text-faint mb-3" style="font-size:.78rem;">Read-only — the recipient already blocked or handled these via their inbox. Shown here for visibility only.</p>
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Event</th><th>From</th><th>To</th><th>Message</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for sh in say_hi_reports %}
+        <tr>
+          <td>{{ sh.event.title }}</td>
+          <td>{{ sh.from_user.name }}</td>
+          <td>{{ sh.to_user.name }}</td>
+          <td style="max-width:240px;">{{ sh.message }}</td>
+          <td class="text-faint" style="font-size:.8rem;">{{ sh.created_at.strftime('%d %b %Y') }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-dim py-4">No reported Say Hi messages</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

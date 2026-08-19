@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block content %}
+<button id="sidebarToggle" class="btn btn-ghost-sm d-lg-none position-fixed" style="top:16px;left:16px;z-index:1100;"><i class="fa-solid fa-bars"></i></button>
+
+<aside class="admin-sidebar">
+  <a href="{{ url_for('organizer_dashboard') }}" class="d-block mb-4 ps-2">
+    <span class="gradient-text fs-5 display-font">🎟️ EVENTIFY</span>
+    <div class="text-faint text-mono" style="font-size:.7rem;">ORGANIZER PORTAL</div>
+  </a>
+  <nav class="d-flex flex-column">
+    <a href="{{ url_for('organizer_dashboard') }}" class="admin-nav-link {% if request.endpoint=='organizer_dashboard' %}active{% endif %}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="{{ url_for('organizer_event_new') }}" class="admin-nav-link {% if request.endpoint=='organizer_event_new' %}active{% endif %}"><i class="fa-solid fa-circle-plus"></i> Create Event</a>
+    <hr style="border-color: var(--border);">
+    <a href="{{ url_for('home') }}" class="admin-nav-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Site</a>
+    <a href="{{ url_for('organizer_logout') }}" class="admin-nav-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </nav>
+</aside>
+
+<div class="admin-content">
+  {% block organizer_content %}{% endblock %}
+</div>
+{% endblock %}

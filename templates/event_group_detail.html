@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }} — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-4 d-flex justify-content-between align-items-start flex-wrap gap-2" data-aos="fade-up">
+      <div>
+        <a href="{{ url_for('event_groups', event_id=group.event_id) }}" class="text-dim" style="font-size:.85rem;"><i class="fa-solid fa-arrow-left me-1"></i> Groups</a>
+        <h2 class="section-title mt-2 mb-0">{{ group.name }}</h2>
+        <p class="text-dim mb-0">{{ group.member_count }} member{{ 's' if group.member_count != 1 else '' }} · {{ group.event.title }}</p>
+      </div>
+      {% if group.creator_id == current_user.id %}
+      <form method="post" action="{{ url_for('event_group_delete', group_id=group.id) }}" onsubmit="return confirm('Delete this group?');">
+        <button type="submit" class="btn btn-outline-glow btn-sm" style="border-color:var(--danger);color:var(--danger);">Delete Group</button>
+      </form>
+      {% else %}
+      <form method="post" action="{{ url_for('event_group_leave', group_id=group.id) }}">
+        <button type="submit" class="btn btn-outline-glow btn-sm">Leave Group</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <div class="glass-card p-4 mb-4" data-aos="fade-up">
+      <h6 class="mb-3">Members</h6>
+      <div class="d-flex flex-wrap gap-2">
+        {% for m in group.members %}
+        <span class="badge-chip"><i class="fa-solid fa-user me-1"></i>{{ m.user.name }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4" data-aos="fade-up">
+      <h6 class="mb-3">Invite a Friend</h6>
+      <form method="post" action="{{ url_for('event_group_invite', group_id=group.id) }}" class="d-flex gap-2">
+        <input type="text" name="identifier" required placeholder="@username or email" class="form-control form-control-glass">
+        <button type="submit" class="btn btn-glow text-nowrap">Invite</button>
+      </form>
+      {% if pending_invites %}
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        {% for inv in pending_invites %}
+        <span class="badge-chip" style="font-size:.78rem;"><i class="fa-regular fa-clock me-1"></i>{{ inv.invited_user.name }} — pending</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="glass-card p-4 mb-4" data-aos="fade-up">
+      <h6 class="mb-3">Create a Poll</h6>
+      <form method="post" action="{{ url_for('poll_create', group_id=group.id) }}">
+        <input type="text" name="question" required maxlength="200" placeholder="What time should we meet?" class="form-control form-control-glass mb-2">
+        <div id="pollOptions" class="d-flex flex-column gap-2 mb-2">
+          <input type="text" name="options[]" placeholder="Option 1" class="form-control form-control-glass">
+          <input type="text" name="options[]" placeholder="Option 2" class="form-control form-control-glass">
+        </div>
+        <button type="button" id="addPollOption" class="btn btn-ghost-sm mb-2"><i class="fa-solid fa-plus me-1"></i> Add option</button>
+        <button type="submit" class="btn btn-glow btn-sm d-block">Create Poll</button>
+      </form>
+    </div>
+
+    <div class="d-flex flex-column gap-3">
+      {% for poll in polls %}
+      <div class="glass-card p-4" data-aos="fade-up">
+        <h6 class="mb-3">{{ poll.question }}</h6>
+        {% set my_vote = poll.voted_by(current_user) %}
+        {% for opt in poll.options %}
+        {% set pct = ((opt.vote_count / poll.total_votes * 100) if poll.total_votes else 0) %}
+        <form method="post" action="{{ url_for('poll_vote', poll_id=poll.id) }}" class="mb-2">
+          <input type="hidden" name="option_id" value="{{ opt.id }}">
+          <button type="submit" class="poll-option-btn w-100 text-start {% if my_vote == opt.id %}voted{% endif %}">
+            <div class="d-flex justify-content-between" style="font-size:.85rem;">
+              <span>{{ opt.text }} {% if my_vote == opt.id %}<i class="fa-solid fa-check ms-1"></i>{% endif %}</span>
+              <span class="text-faint">{{ opt.vote_count }} vote{{ 's' if opt.vote_count != 1 else '' }}</span>
+            </div>
+            <div class="poll-bar"><div class="poll-bar-fill" style="width:{{ pct }}%;"></div></div>
+          </button>
+        </form>
+        {% endfor %}
+        <span class="text-faint" style="font-size:.76rem;">{{ poll.total_votes }} total vote{{ 's' if poll.total_votes != 1 else '' }}</span>
+      </div>
+      {% else %}
+      <div class="glass-card p-4 text-center text-dim" data-aos="fade-up">No polls yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelector('#addPollOption').addEventListener('click', () => {
+  const wrap = document.querySelector('#pollOptions');
+  if (wrap.children.length >= 6) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.name = 'options[]';
+  input.className = 'form-control form-control-glass';
+  input.placeholder = `Option ${wrap.children.length + 1}`;
+  wrap.appendChild(input);
+});
+</script>
+{% endblock %}

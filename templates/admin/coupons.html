@@ -1,0 +1,82 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manage Coupons — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4 d-flex justify-content-between align-items-end flex-wrap gap-2" data-aos="fade-up">
+  <div>
+    <h2 class="section-title">Manage Coupons</h2>
+    <p class="text-dim mb-0">{{ coupons|length }} coupon(s)</p>
+  </div>
+  <button type="button" class="btn btn-glow" data-bs-toggle="modal" data-bs-target="#newCouponModal"><i class="fa-solid fa-plus me-1"></i> New Coupon</button>
+</div>
+
+<div class="glass-card p-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Code</th><th>Discount</th><th>Min. Booking</th><th>Max Discount</th><th>Usage</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for c in coupons %}
+        <tr>
+          <td class="text-mono fw-semibold">{{ c.code }}</td>
+          <td>
+            {% if c.discount_type == 'flat' %}₹{{ '%.0f'|format(c.discount_amount) }} OFF
+            {% else %}{{ '%.0f'|format(c.discount_percent) }}% OFF{% endif %}
+          </td>
+          <td>{{ '₹%.0f'|format(c.min_booking_amount) if c.min_booking_amount else '—' }}</td>
+          <td>{{ '₹%.0f'|format(c.max_discount_amount) if c.max_discount_amount else '—' }}</td>
+          <td>{{ c.times_used or 0 }}{% if c.usage_limit %} / {{ c.usage_limit }}{% endif %}</td>
+          <td class="text-faint" style="font-size:.8rem;">{{ c.expiry_date.strftime('%d %b %Y') if c.expiry_date else 'Never' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_coupon_toggle', coupon_id=c.id) }}">
+              <button type="submit" class="badge-status {{ 'active' if c.active else 'disabled' }}" style="border:none;cursor:pointer;">
+                {{ 'Active' if c.active else 'Disabled' }}
+              </button>
+            </form>
+          </td>
+          <td class="text-end">
+            <button type="button" class="btn btn-ghost-sm" data-bs-toggle="modal" data-bs-target="#editCouponModal{{ c.id }}"><i class="fa-solid fa-pen"></i></button>
+            <form method="post" action="{{ url_for('admin_coupon_delete', coupon_id=c.id) }}" class="d-inline" onsubmit="return confirm('Delete this coupon?');">
+              <button type="submit" class="btn btn-ghost-sm" style="color:var(--danger);"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+
+        <!-- Edit modal for this coupon -->
+        <div class="modal fade" id="editCouponModal{{ c.id }}" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0 p-2">
+              <form method="post" action="{{ url_for('admin_coupon_edit', coupon_id=c.id) }}">
+                <div class="modal-header border-0"><h6 class="modal-title">Edit "{{ c.code }}"</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                  {% include "admin/_coupon_fields.html" with context %}
+                </div>
+                <div class="modal-footer border-0"><button type="submit" class="btn btn-glow w-100">Save Changes</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-dim py-5">No coupons yet — create one to get started.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- New coupon modal -->
+<div class="modal fade" id="newCouponModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-card border-0 p-2">
+      <form method="post" action="{{ url_for('admin_coupon_new') }}">
+        <div class="modal-header border-0"><h6 class="modal-title">New Coupon</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <label class="form-label-glass">Coupon Code</label>
+          <input type="text" name="code" required maxlength="40" class="form-control form-control-glass mb-3" placeholder="e.g. WELCOME20">
+          {% set c = None %}
+          {% include "admin/_coupon_fields.html" with context %}
+        </div>
+        <div class="modal-footer border-0"><button type="submit" class="btn btn-glow w-100">Create Coupon</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

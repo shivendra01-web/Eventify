@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Transfer Ticket — {{ booking.event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:560px;">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">Transfer Your Ticket</h2>
+      <p class="text-dim">{{ booking.event.title }} · Booking ID {{ booking.booking_ref }}</p>
+    </div>
+
+    <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+      {% if sent %}
+        <div class="text-center mb-4">
+          <div class="success-check mx-auto mb-3"><i class="fa-solid fa-check"></i></div>
+          <h6>Transfer link generated</h6>
+          <p class="text-dim" style="font-size:.85rem;">
+            Eventify doesn't have an email service connected yet, so share this secure link with
+            the recipient directly (WhatsApp, SMS, etc). It only works for their account and expires in 7 days.
+          </p>
+        </div>
+        <div class="glass p-3 mb-4" style="word-break:break-all; font-size:.82rem;">
+          <code>{{ accept_url }}</code>
+        </div>
+        <a href="{{ url_for('ticket', booking_id=booking.id) }}" class="btn btn-glow w-100">Back to Ticket</a>
+      {% else %}
+        <p class="text-dim mb-4" style="font-size:.85rem;">
+          <i class="fa-solid fa-shield-halved me-1"></i> The recipient must already have an Eventify
+          account with the email below, and must confirm the phone number to accept. You'll lose access
+          to this ticket once they accept.
+        </p>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label-glass">Recipient's Email</label>
+            <input type="email" name="to_email" required class="form-control form-control-glass" placeholder="friend@example.com">
+          </div>
+          <div class="mb-4">
+            <label class="form-label-glass">Recipient's Phone Number</label>
+            <input type="tel" name="to_phone" required class="form-control form-control-glass" placeholder="10-digit mobile number">
+          </div>
+          <button type="submit" class="btn btn-glow w-100"><i class="fa-solid fa-right-left me-1"></i> Start Transfer</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

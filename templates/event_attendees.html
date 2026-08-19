@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Who's Going — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:560px;">
+    <div class="mb-4" data-aos="fade-up">
+      <a href="{{ url_for('event_detail', event_id=event.id) }}" class="text-dim" style="font-size:.85rem;">
+        <i class="fa-solid fa-arrow-left me-1"></i> {{ event.title }}
+      </a>
+      <h3 class="section-title mt-2 mb-0">Who's Going</h3>
+      <p class="text-dim mb-0">{{ people|length }} attendee{{ 's' if people|length != 1 else '' }} visible to you</p>
+    </div>
+
+    <div class="glass-card p-2" data-aos="fade-up">
+      {% if people %}
+        {% for person in people %}
+        <a href="{{ url_for('public_profile', username=person.username) if person.username else '#' }}"
+           class="d-flex align-items-center gap-3 p-3 text-decoration-none follow-list-row">
+          <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:44px;height:44px;background:var(--grad-primary);flex-shrink:0;color:#fff;">
+            {{ person.name[0]|upper }}
+          </div>
+          <div>
+            <div class="text-white fw-semibold">{{ person.name }}</div>
+            <span class="text-faint" style="font-size:.82rem;">@{{ person.username or 'eventify-user' }}{% if person.city %} · {{ person.city }}{% endif %}</span>
+          </div>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div class="text-center py-5">
+          <i class="fa-solid fa-user-group text-faint fs-3 mb-2 d-block"></i>
+          <p class="text-dim mb-0">No visible attendees yet — attendance may be private.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

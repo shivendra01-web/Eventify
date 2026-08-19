@@ -1,0 +1,59 @@
+{% set is_reply = c.parent_id is not none %}
+<div class="comment-row {% if is_reply %}comment-reply{% endif %}">
+  <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+       style="width:38px;height:38px;background:var(--grad-primary);color:#fff;font-size:.85rem;">
+    {{ (c.user.name[0]|upper) if not c.is_deleted else '·' }}
+  </div>
+  <div class="flex-grow-1">
+    {% if c.is_deleted %}
+      <p class="text-faint mb-1" style="font-size:.88rem;"><em>[comment deleted]</em></p>
+    {% else %}
+      <div class="d-flex align-items-baseline gap-2">
+        <span class="fw-semibold" style="font-size:.9rem;">{{ c.user.name }}</span>
+        <span class="text-faint" style="font-size:.76rem;">{{ c.created_at.strftime('%d %b, %H:%M') }}</span>
+      </div>
+      <p class="mb-1" style="font-size:.9rem;">{{ c.content }}</p>
+      <div class="d-flex align-items-center gap-3" style="font-size:.78rem;">
+        <button type="button" class="comment-like-btn text-dim border-0 bg-transparent p-0 {% if c.liked_by(current_user) %}liked{% endif %}"
+                data-comment-id="{{ c.id }}" {% if not current_user.is_authenticated %}data-auth-required="true"{% endif %}>
+          <i class="{% if c.liked_by(current_user) %}fa-solid{% else %}fa-regular{% endif %} fa-heart me-1"></i>
+          <span class="like-count">{{ c.like_count }}</span>
+        </button>
+        {% if not is_reply and current_user.is_authenticated %}
+        <button type="button" class="text-dim border-0 bg-transparent p-0 reply-toggle" data-comment-id="{{ c.id }}">Reply</button>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.id == c.user_id %}
+        <form method="post" action="{{ url_for('comment_delete', comment_id=c.id) }}" onsubmit="return confirm('Delete this comment?');">
+          <button type="submit" class="text-dim border-0 bg-transparent p-0">Delete</button>
+        </form>
+        {% elif current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('comment_report', comment_id=c.id) }}" onsubmit="return confirm('Report this comment?');">
+          <button type="submit" class="text-dim border-0 bg-transparent p-0">Report</button>
+        </form>
+        {% endif %}
+        {% if current_user.is_authenticated and current_user.is_admin and current_user.id != c.user_id %}
+        <form method="post" action="{{ url_for('comment_delete', comment_id=c.id) }}" onsubmit="return confirm('Remove this comment as admin?');">
+          <button type="submit" class="text-danger border-0 bg-transparent p-0">Remove (admin)</button>
+        </form>
+        {% endif %}
+      </div>
+
+      {% if not is_reply and current_user.is_authenticated %}
+      <form method="post" action="{{ url_for('comment_add', event_id=event.id) }}" class="reply-form d-none mt-2">
+        <input type="hidden" name="parent_id" value="{{ c.id }}">
+        <textarea name="content" maxlength="500" rows="1" class="form-control form-control-glass mb-2" placeholder="Write a reply..." required></textarea>
+        <button type="submit" class="btn btn-glow btn-sm">Reply</button>
+      </form>
+      {% endif %}
+    {% endif %}
+
+    {% if not is_reply and c.replies %}
+    <div class="d-flex flex-column gap-3 mt-3">
+      {% for reply in c.replies|sort(attribute='created_at') %}
+        {% set c = reply %}
+        {% include "_comment.html" %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>

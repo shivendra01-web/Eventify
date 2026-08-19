@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Live Stream — {{ event.title }}{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">📺 Live Stream Access</h2>
+      <p class="text-dim">{{ event.title }} · {{ event.date.strftime('%d %b %Y') }} · {{ event.time }}</p>
+    </div>
+
+    <div class="glass-card p-4 p-md-5 text-center" data-aos="fade-up">
+      <div class="mb-3"><i class="fa-solid fa-circle-check text-success fs-2"></i></div>
+      <h6 class="mb-3">Your streaming entitlement is verified</h6>
+
+      {% if state == "LIVE" %}
+        <span class="badge-status active mb-3 d-inline-block"><i class="fa-solid fa-circle me-1" style="font-size:.55rem;"></i> LIVE NOW</span>
+        <div>
+          {% if event.streaming_url %}
+            <a href="{{ event.streaming_url }}" target="_blank" rel="noopener" class="btn btn-glow btn-lg">
+              <i class="fa-solid fa-play me-1"></i> Join Live Stream
+            </a>
+          {% else %}
+            <div class="alert-glass p-3" style="font-size:.85rem;">
+              <i class="fa-solid fa-clock me-1"></i> The stream link hasn't been published yet.
+              It will appear here automatically once the organizer connects it.
+            </div>
+          {% endif %}
+        </div>
+
+      {% elif state == "UPCOMING" %}
+        <span class="badge-status disabled mb-3 d-inline-block"><i class="fa-regular fa-clock me-1"></i> Not started yet</span>
+        <p class="text-dim mb-0" style="font-size:.9rem;">
+          {% if event.access_start %}
+            Livestream starts at {{ event.access_start.strftime('%d %b, %I:%M %p') }}.
+          {% else %}
+            Livestream opens on {{ event.date.strftime('%d %B %Y') }}.
+          {% endif %}
+          Come back then — this page will switch to the live player automatically.
+        </p>
+
+      {% elif state == "ENDED" %}
+        <span class="badge-status cancelled mb-3 d-inline-block"><i class="fa-solid fa-flag-checkered me-1"></i> Ended</span>
+        <p class="text-dim mb-0" style="font-size:.9rem;">✓ This livestream has ended. Thanks for watching!</p>
+      {% endif %}
+
+      <p class="text-faint mt-4 mb-0" style="font-size:.78rem;">
+        Booking ID {{ booking.booking_ref }} — this page is only visible to the verified ticket holder.
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% set is_flat = c and c.discount_type == 'flat' %}
+<div class="row g-3">
+  <div class="col-md-6">
+    <label class="form-label-glass">Discount Type</label>
+    <select name="discount_type" class="form-select form-select-glass coupon-discount-type">
+      <option value="percent" {% if not is_flat %}selected{% endif %}>Percentage Off</option>
+      <option value="flat" {% if is_flat %}selected{% endif %}>Flat ₹ Off</option>
+    </select>
+  </div>
+  <div class="col-md-6 coupon-percent-field" {% if is_flat %}style="display:none;"{% endif %}>
+    <label class="form-label-glass">Discount Percent</label>
+    <input type="number" name="discount_percent" min="1" max="100" step="1"
+           value="{{ c.discount_percent if c and not is_flat else 50 }}" class="form-control form-control-glass">
+  </div>
+  <div class="col-md-6 coupon-flat-field" {% if not is_flat %}style="display:none;"{% endif %}>
+    <label class="form-label-glass">Flat Discount (₹)</label>
+    <input type="number" name="discount_amount" min="1" step="1"
+           value="{{ c.discount_amount if c and is_flat else '' }}" class="form-control form-control-glass">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label-glass">Minimum Booking (₹, optional)</label>
+    <input type="number" name="min_booking_amount" min="0" step="1" value="{{ c.min_booking_amount if c and c.min_booking_amount else '' }}" class="form-control form-control-glass">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label-glass">Maximum Discount (₹, optional)</label>
+    <input type="number" name="max_discount_amount" min="0" step="1" value="{{ c.max_discount_amount if c and c.max_discount_amount else '' }}" class="form-control form-control-glass">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label-glass">Usage Limit (optional)</label>
+    <input type="number" name="usage_limit" min="1" step="1" value="{{ c.usage_limit if c and c.usage_limit else '' }}" class="form-control form-control-glass" placeholder="Unlimited">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label-glass">Expiry Date (optional)</label>
+    <input type="date" name="expiry_date" value="{{ c.expiry_date.isoformat() if c and c.expiry_date else '' }}" class="form-control form-control-glass">
+  </div>
+  <div class="col-12">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" name="active" {% if not c or c.active %}checked{% endif %}>
+      <label class="form-check-label text-dim">Active</label>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  document.currentScript.closest('.modal-body').querySelector('.coupon-discount-type').addEventListener('change', function(e) {
+    const modalBody = e.target.closest('.modal-body');
+    const isFlat = e.target.value === 'flat';
+    modalBody.querySelector('.coupon-percent-field').style.display = isFlat ? 'none' : '';
+    modalBody.querySelector('.coupon-flat-field').style.display = isFlat ? '' : 'none';
+  });
+})();
+</script>

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container">
+    <div class="mb-5" data-aos="fade-up">
+      <h2 class="section-title">Welcome back, {{ current_user.name.split(' ')[0] }} 👋</h2>
+      <p class="text-dim">Here's what's happening with your bookings</p>
+    </div>
+
+    <div class="mb-5" data-aos="fade-up">
+      <h5 class="mb-3">🔥 Happening Today</h5>
+      {% if todays_bookings %}
+      <div class="row g-4">
+        {% for b in todays_bookings %}
+        <div class="col-md-6 col-lg-4">
+          <div class="glass-card offer-card p-3">
+            <div class="d-flex gap-3">
+              <img src="{{ b.event.image }}" class="rounded-3" style="width:70px;height:70px;object-fit:cover;">
+              <div class="flex-fill">
+                <span class="text-warning" style="font-size:.78rem;">🔔 Today · {{ b.event.time }}</span>
+                <h6 class="mb-1">{{ b.event.title }}</h6>
+                <p class="text-faint mb-0" style="font-size:.78rem;">{{ b.event.venue }}, {{ b.event.location }}</p>
+              </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              {% if b.has_physical_item %}
+              <a href="{{ url_for('ticket', booking_id=b.id) }}" class="btn btn-outline-glow btn-sm flex-fill">View Ticket</a>
+              {% endif %}
+              {% if b.has_streaming_item %}
+              <a href="{{ url_for('stream_access', booking_id=b.id) }}" class="btn btn-outline-glow btn-sm flex-fill">
+                {% if b.event.stream_state == 'LIVE' %}<span class="text-success">Live Now</span>{% else %}Watch Live{% endif %}
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="glass-card p-4 text-dim" style="font-size:.9rem;">
+        <i class="fa-regular fa-calendar-check me-2"></i> No booked events happening today.
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="row g-4 mb-5">
+      <div class="col-6 col-lg-3" data-aos="fade-up">
+        <div class="glass-card p-4">
+          <i class="fa-solid fa-ticket text-info mb-2 fs-4"></i>
+          <div class="stat-number" style="font-size:2rem;" data-count="{{ total_bookings }}">0</div>
+          <p class="text-dim mb-0">Total Bookings</p>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="60">
+        <div class="glass-card p-4">
+          <i class="fa-solid fa-calendar-check text-info mb-2 fs-4"></i>
+          <div class="stat-number" style="font-size:2rem;" data-count="{{ upcoming_count }}">0</div>
+          <p class="text-dim mb-0">Upcoming Events</p>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+        <div class="glass-card p-4">
+          <i class="fa-solid fa-heart text-info mb-2 fs-4"></i>
+          <div class="stat-number" style="font-size:2rem;" data-count="{{ wishlist_count }}">0</div>
+          <p class="text-dim mb-0">Wishlist</p>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="180">
+        <div class="glass-card p-4">
+          <i class="fa-solid fa-clock-rotate-left text-info mb-2 fs-4"></i>
+          <div class="stat-number" style="font-size:2rem;" data-count="{{ tickets_used }}">0</div>
+          <p class="text-dim mb-0">Tickets Used</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2" data-aos="fade-up">
+      <div class="d-flex align-items-center gap-3">
+        <h5 class="mb-0">Eventify Connect</h5>
+        <span class="text-dim" style="font-size:.85rem;">
+          <a href="{{ url_for('followers_list', username=current_user.username) if current_user.username else url_for('profile') }}" class="text-dim">
+            <strong class="text-white">{{ current_user.follower_count }}</strong> Followers
+          </a>
+          &nbsp;·&nbsp;
+          <a href="{{ url_for('following_list', username=current_user.username) if current_user.username else url_for('profile') }}" class="text-dim">
+            <strong class="text-white">{{ current_user.following_count }}</strong> Following
+          </a>
+        </span>
+      </div>
+      <a href="{{ url_for('profile') }}" class="text-dim" style="font-size:.85rem;">Edit profile <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5 class="mb-0">Upcoming Bookings</h5>
+      <a href="{{ url_for('my_bookings') }}" class="text-dim" style="font-size:.85rem;">View all <i class="fa-solid fa-arrow-right ms-1"></i></a>
+    </div>
+
+    {% if upcoming %}
+    <div class="row g-4 mb-5">
+      {% for b in upcoming %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up">
+        <div class="glass-card p-3">
+          <div class="d-flex gap-3">
+            <img src="{{ b.event.image }}" class="rounded-3" style="width:80px;height:80px;object-fit:cover;">
+            <div class="flex-fill">
+              <h6 class="mb-1">{{ b.event.title }}</h6>
+              <p class="text-faint mb-1" style="font-size:.8rem;">{{ b.event.date.strftime('%d %b %Y') }} · {{ b.event.venue }}</p>
+              <span class="badge-status {{ b.status }}">{{ b.status|capitalize }}</span>
+            </div>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            {% if b.has_physical_item %}
+            <a href="{{ url_for('ticket', booking_id=b.id) }}" class="btn btn-outline-glow btn-sm flex-fill">View Ticket</a>
+            {% endif %}
+            {% if b.has_streaming_item %}
+            <a href="{{ url_for('stream_access', booking_id=b.id) }}" class="btn btn-outline-glow btn-sm flex-fill">
+              {% if b.event.stream_state == 'LIVE' %}<span class="text-success">Live Now</span>{% else %}Watch Live{% endif %}
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state py-5" data-aos="fade-up">
+      <div class="icon-wrap"><i class="fa-solid fa-calendar-xmark"></i></div>
+      <h5 class="mb-2">No upcoming bookings</h5>
+      <p class="text-dim mb-4">Explore events and book your next experience.</p>
+      <a href="{{ url_for('events') }}" class="btn btn-glow">Explore Events</a>
+    </div>
+    {% endif %}
+
+    {% if recommended %}
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+      <h5 class="mb-0">For You</h5>
+      <span class="text-faint" style="font-size:.78rem;">Based on your interests, past bookings & wishlist</span>
+    </div>
+    <div class="row g-4">
+      {% for e in recommended %}
+      <div class="col-md-6 col-lg-3" data-aos="fade-up">
+        {% include "_event_card.html" %}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

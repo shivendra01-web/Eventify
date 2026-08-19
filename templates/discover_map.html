@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Discover Events — Eventify{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  #discoverMap { height: 62vh; min-height: 420px; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+  .leaflet-popup-content-wrapper { background: var(--navy-2); color: var(--text); border-radius: var(--radius-sm); }
+  .leaflet-popup-tip { background: var(--navy-2); }
+  .map-popup a { color: #fff; }
+</style>
+{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container-fluid px-4">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">🗺️ Discover Events Near You</h2>
+      <p class="text-dim mb-0">City-level map — pins show approximate city location, not exact venue coordinates</p>
+      {% if unmatched %}<p class="text-faint" style="font-size:.8rem;">{{ unmatched }} event(s) in cities not yet mapped aren't shown here.</p>{% endif %}
+    </div>
+    <div id="discoverMap" data-aos="fade-up"></div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const markers = {{ markers|tojson }};
+const map = L.map('discoverMap', { scrollWheelZoom: false }).setView([22.5, 79], 5);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+  maxZoom: 18,
+}).addTo(map);
+
+const grouped = {};
+markers.forEach((m) => {
+  const key = m.lat + ',' + m.lng;
+  grouped[key] = grouped[key] || [];
+  grouped[key].push(m);
+});
+
+Object.entries(grouped).forEach(([key, group]) => {
+  const [lat, lng] = key.split(',').map(Number);
+  const jitterLat = lat + (Math.random() - 0.5) * 0.02;
+  const jitterLng = lng + (Math.random() - 0.5) * 0.02;
+  const marker = L.marker([jitterLat, jitterLng]).addTo(map);
+  const listHtml = group.slice(0, 5).map((m) =>
+    `<div style="margin-bottom:6px;"><a href="/events/${m.id}"><strong>${m.title}</strong></a><br>
+     <span style="font-size:.78rem;opacity:.7;">${m.category} · ${m.date} · from ₹${Math.round(m.price)}</span></div>`
+  ).join('<hr style="margin:6px 0;opacity:.2;">');
+  marker.bindPopup(`<div class="map-popup" style="min-width:200px;">${listHtml}</div>`);
+});
+
+if (markers.length === 0) {
+  document.querySelector('#discoverMap').innerHTML = '<div class="d-flex align-items-center justify-content-center h-100 text-dim">No mapped events yet</div>';
+}
+</script>
+{% endblock %}

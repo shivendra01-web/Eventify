@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Feed — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:640px;">
+    <div class="mb-4" data-aos="fade-up">
+      <h2 class="section-title mb-0">🔥 Your Feed</h2>
+      <p class="text-dim mb-0">What people you follow are up to</p>
+    </div>
+
+    {% if not has_follows %}
+    <div class="glass-card p-5 text-center" data-aos="fade-up">
+      <i class="fa-solid fa-user-group text-faint fs-2 mb-3 d-block"></i>
+      <h6>Follow people to see their activity here</h6>
+      <p class="text-dim mb-3" style="font-size:.88rem;">Once you follow someone, their bookings, reviews, comments, and reactions will show up in your feed.</p>
+      <a href="{{ url_for('events') }}" class="btn btn-glow">Browse Events</a>
+    </div>
+    {% elif not items %}
+    <div class="glass-card p-5 text-center" data-aos="fade-up">
+      <i class="fa-regular fa-comment-dots text-faint fs-2 mb-3 d-block"></i>
+      <h6>No activity yet</h6>
+      <p class="text-dim mb-0" style="font-size:.88rem;">Nothing from the people you follow just yet — check back soon.</p>
+    </div>
+    {% else %}
+    <div class="d-flex flex-column gap-3">
+      {% for item in items %}
+      <div class="glass-card p-3 d-flex gap-3" data-aos="fade-up">
+        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+             style="width:40px;height:40px;background:var(--grad-primary);color:#fff;font-size:.85rem;">
+          {{ item.user.name[0]|upper }}
+        </div>
+        <div class="flex-grow-1">
+          {% if item.type == 'attending' %}
+          <p class="mb-1" style="font-size:.9rem;">
+            <a href="{{ url_for('public_profile', username=item.user.username) if item.user.username else '#' }}" class="text-white fw-semibold text-decoration-none">{{ item.user.name }}</a>
+            is attending <a href="{{ url_for('event_detail', event_id=item.event.id) }}" class="text-info">{{ item.event.title }}</a>
+          </p>
+          {% elif item.type == 'review' %}
+          <p class="mb-1" style="font-size:.9rem;">
+            <a href="{{ url_for('public_profile', username=item.user.username) if item.user.username else '#' }}" class="text-white fw-semibold text-decoration-none">{{ item.user.name }}</a>
+            reviewed <a href="{{ url_for('event_detail', event_id=item.event.id) }}#reviews" class="text-info">{{ item.event.title }}</a>
+            <span class="text-warning">{{ '★' * item.review.rating }}{{ '☆' * (5 - item.review.rating) }}</span>
+          </p>
+          {% if item.review.content %}<p class="text-dim mb-0" style="font-size:.85rem;">"{{ item.review.content }}"</p>{% endif %}
+          {% elif item.type == 'comment' %}
+          <p class="mb-1" style="font-size:.9rem;">
+            <a href="{{ url_for('public_profile', username=item.user.username) if item.user.username else '#' }}" class="text-white fw-semibold text-decoration-none">{{ item.user.name }}</a>
+            commented on <a href="{{ url_for('event_detail', event_id=item.event.id) }}#discussion" class="text-info">{{ item.event.title }}</a>
+          </p>
+          <p class="text-dim mb-0" style="font-size:.85rem;">"{{ item.comment.content }}"</p>
+          {% elif item.type == 'reaction' %}
+          {% set reaction_emoji = {'love':'❤️','excited':'🔥','funny':'😂','cant_wait':'🤩','interested':'🎵'} %}
+          <p class="mb-0" style="font-size:.9rem;">
+            <a href="{{ url_for('public_profile', username=item.user.username) if item.user.username else '#' }}" class="text-white fw-semibold text-decoration-none">{{ item.user.name }}</a>
+            reacted {{ reaction_emoji.get(item.reaction_type, '✨') }} to <a href="{{ url_for('event_detail', event_id=item.event.id) }}" class="text-info">{{ item.event.title }}</a>
+          </p>
+          {% endif %}
+          <span class="text-faint" style="font-size:.74rem;">{{ item.at.strftime('%d %b, %H:%M') }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

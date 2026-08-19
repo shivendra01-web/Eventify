@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+eventify_before_repair.db
+eventify_phase9_backup.db
+eventify_working_backup.db

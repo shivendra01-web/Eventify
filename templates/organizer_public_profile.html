@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ organizer.name }} — Eventify Organizer{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:760px;">
+    <div class="glass-card p-4 p-md-5 mb-4" data-aos="fade-up">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="rounded-circle d-flex align-items-center justify-content-center fs-3 fw-bold" style="width:76px;height:76px;background:var(--grad-primary);flex-shrink:0;">
+            {{ organizer.name[0]|upper }}
+          </div>
+          <div>
+            <h4 class="mb-0">
+              {{ organizer.name }}
+              {% if organizer.is_verified %}
+              <i class="fa-solid fa-circle-check text-info ms-1" title="Eventify Verified" style="font-size:.8em;"></i>
+              {% endif %}
+            </h4>
+            {% if organizer.is_verified %}
+            <span class="badge-chip" style="font-size:.7rem;"><i class="fa-solid fa-badge-check me-1"></i>Eventify Verified</span>
+            {% endif %}
+            {% if organizer.bio %}<p class="text-dim mb-0 mt-1" style="font-size:.88rem;">{{ organizer.bio }}</p>{% endif %}
+          </div>
+        </div>
+        {% if current_user.is_authenticated and current_user.id != organizer.id %}
+        <form method="post" action="{{ url_for('follow_toggle', user_id=organizer.id) }}">
+          {% if already_following %}
+          <button type="submit" class="btn btn-outline-glow"><i class="fa-solid fa-user-check me-1"></i> Following</button>
+          {% else %}
+          <button type="submit" class="btn btn-glow"><i class="fa-solid fa-user-plus me-1"></i> Follow</button>
+          {% endif %}
+        </form>
+        {% endif %}
+      </div>
+
+      <div class="row g-3 mt-4">
+        <div class="col-4 text-center">
+          <div class="fs-4 fw-bold">{{ events|length }}</div>
+          <span class="text-faint" style="font-size:.78rem;">Events Hosted</span>
+        </div>
+        <div class="col-4 text-center">
+          <div class="fs-4 fw-bold">{{ total_attendance }}</div>
+          <span class="text-faint" style="font-size:.78rem;">Total Attendance</span>
+        </div>
+        <div class="col-4 text-center">
+          <div class="fs-4 fw-bold text-warning">
+            {% if avg_rating %}{{ avg_rating }} <i class="fa-solid fa-star" style="font-size:.7em;"></i>{% else %}—{% endif %}
+          </div>
+          <span class="text-faint" style="font-size:.78rem;">{{ review_count }} review{{ 's' if review_count != 1 else '' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="mb-3" data-aos="fade-up">Events by {{ organizer.name }}</h6>
+    <div class="row g-4">
+      {% for e in events %}
+      <div class="col-md-6" data-aos="fade-up">
+        {% include "_event_card.html" %}
+      </div>
+      {% else %}
+      <div class="col-12">
+        <div class="glass-card p-5 text-center text-dim">No published events yet.</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Accept Ticket Transfer{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:560px;">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">Ticket Transfer Request</h2>
+      <p class="text-dim">{{ transfer.from_user.name }} wants to transfer a ticket to you</p>
+    </div>
+
+    <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+      <div class="glass p-3 mb-4">
+        <h6 class="mb-1">{{ booking.event.title }}</h6>
+        <p class="text-dim mb-0" style="font-size:.82rem;">{{ booking.event.date.strftime('%d %b %Y') }} · {{ booking.event.venue }}, {{ booking.event.location }}</p>
+        <p class="text-dim mb-0 mt-2" style="font-size:.82rem;">
+          {% for item in booking.items %}{{ item.ticket_type }} × {{ item.quantity }}{% if not loop.last %}, {% endif %}{% endfor %}
+        </p>
+      </div>
+
+      <p class="text-dim mb-4" style="font-size:.85rem;">
+        <i class="fa-solid fa-shield-halved me-1"></i> To confirm this is really you, please re-enter the
+        phone number the sender used for this transfer.
+      </p>
+
+      <form method="post">
+        <div class="mb-4">
+          <label class="form-label-glass">Confirm Your Phone Number</label>
+          <input type="tel" name="phone_confirm" required class="form-control form-control-glass" placeholder="10-digit mobile number">
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" name="action" value="accept" class="btn btn-glow flex-fill"><i class="fa-solid fa-check me-1"></i> Accept Ticket</button>
+          <button type="submit" name="action" value="reject" class="btn btn-outline-glow">Decline</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

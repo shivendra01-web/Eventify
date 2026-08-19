@@ -1,0 +1,120 @@
+{% extends "organizer/base.html" %}
+{% block title %}Organizer Dashboard — Eventify{% endblock %}
+{% block organizer_content %}
+<div class="mb-4 d-flex justify-content-between align-items-end flex-wrap gap-2" data-aos="fade-up">
+  <div>
+    <h2 class="section-title">Welcome, {{ current_user.name }}</h2>
+    <p class="text-dim mb-0">Here's how your events are performing</p>
+  </div>
+  <a href="{{ url_for('organizer_event_new') }}" class="btn btn-glow"><i class="fa-solid fa-circle-plus me-1"></i> Create Event</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="glass-card p-3" data-aos="fade-up">
+      <span class="text-faint" style="font-size:.78rem;">Total Events</span>
+      <h3 class="mb-0">{{ total_events }}</h3>
+      <span class="text-dim" style="font-size:.78rem;">{{ published_count }} published · {{ draft_count }} draft</span>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="glass-card p-3" data-aos="fade-up">
+      <span class="text-faint" style="font-size:.78rem;">Upcoming</span>
+      <h3 class="mb-0">{{ upcoming_count }}</h3>
+      <span class="text-dim" style="font-size:.78rem;">events ahead</span>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="glass-card p-3" data-aos="fade-up">
+      <span class="text-faint" style="font-size:.78rem;">Total Bookings</span>
+      <h3 class="mb-0">{{ total_bookings }}</h3>
+      <span class="text-dim" style="font-size:.78rem;">{{ total_tickets_sold }} tickets sold</span>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="glass-card p-3" data-aos="fade-up">
+      <span class="text-faint" style="font-size:.78rem;">Gross Revenue</span>
+      <h3 class="mb-0">₹{{ '%.0f'|format(total_gross_revenue) }}</h3>
+      <span class="text-dim" style="font-size:.78rem;">from successful payments</span>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-5">
+  <div class="col-md-6">
+    <div class="glass-card p-3" data-aos="fade-up">
+      <span class="text-faint" style="font-size:.78rem;"><i class="fa-solid fa-ticket me-1"></i>Physical Tickets Sold</span>
+      <h4 class="mb-0">{{ total_physical_tickets }}</h4>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="glass-card p-3" data-aos="fade-up">
+      <span class="text-faint" style="font-size:.78rem;"><i class="fa-solid fa-video me-1"></i>Online Tickets Sold · Revenue</span>
+      <h4 class="mb-0">{{ total_online_tickets }} <span class="text-dim fs-6 fw-normal">· ₹{{ '%.0f'|format(total_online_revenue) }}</span></h4>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3" data-aos="fade-up">
+  <h5 class="mb-0">My Events</h5>
+</div>
+<div class="glass-card p-4 mb-5" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Event</th><th>Date</th><th>Access</th><th>Status</th><th>Tickets Sold</th><th>Revenue</th><th></th></tr></thead>
+      <tbody>
+        {% for e in events %}
+        <tr>
+          <td><a href="{{ url_for('organizer_event_detail', event_id=e.id) }}" class="text-white text-decoration-none">{{ e.title }}</a></td>
+          <td>{{ e.date.strftime('%d %b %Y') }}</td>
+          <td style="font-size:.78rem;">
+            {% if e.event_type == 'physical' %}<span class="text-faint">Physical only</span>
+            {% else %}<span class="text-info"><i class="fa-solid fa-video me-1"></i>{{ e.event_type|capitalize }}</span>{% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('organizer_event_publish_toggle', event_id=e.id) }}" class="d-inline">
+              <button type="submit" class="badge-status {{ 'active' if e.is_published else 'disabled' }}" style="border:none;cursor:pointer;">
+                {{ 'Published' if e.is_published else 'Draft' }}
+              </button>
+            </form>
+          </td>
+          <td>{{ e.physical_tickets_sold + e.online_tickets_sold }}</td>
+          <td>₹{{ '%.0f'|format(e.gross_revenue) }}</td>
+          <td class="text-end">
+            <a href="{{ url_for('organizer_event_edit', event_id=e.id) }}" class="btn btn-ghost-sm" title="Edit"><i class="fa-solid fa-pen"></i></a>
+            <a href="{{ url_for('organizer_livestream', event_id=e.id) }}" class="btn btn-ghost-sm" title="Livestream"><i class="fa-solid fa-video"></i></a>
+            <a href="{{ url_for('organizer_event_detail', event_id=e.id) }}" class="btn btn-ghost-sm" title="Details"><i class="fa-solid fa-chart-simple"></i></a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-dim py-5">No events yet — create your first one.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3" data-aos="fade-up">
+  <h5 class="mb-0">Recent Bookings</h5>
+</div>
+<div class="glass-card p-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Booking ID</th><th>Event</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for b in recent_bookings %}
+        <tr>
+          <td class="text-mono">{{ b.booking_ref }}</td>
+          <td>{{ b.event.title }}</td>
+          <td>{{ b.customer_name or b.user.name }}</td>
+          <td>₹{{ '%.0f'|format(b.total_amount) }}</td>
+          <td><span class="badge-status {{ b.status }}">{{ b.status|capitalize }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center text-dim py-5">No bookings yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}@{{ profile_user.username }} — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:680px;">
+
+    <div class="glass-card p-4 p-md-5" data-aos="fade-up">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-3">
+        <div class="d-flex align-items-center gap-3">
+          <div class="rounded-circle d-flex align-items-center justify-content-center fs-3 fw-bold" style="width:76px;height:76px;background:var(--grad-primary);flex-shrink:0;">
+            {{ profile_user.name[0]|upper }}
+          </div>
+          <div>
+            <h4 class="mb-0">{{ profile_user.name }}</h4>
+            <span class="text-faint">@{{ profile_user.username }}</span>
+            {% if profile_user.city and visible %}
+            <p class="text-dim mb-0 mt-1" style="font-size:.85rem;"><i class="fa-solid fa-location-dot me-1"></i>{{ profile_user.city }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if not is_own and current_user.is_authenticated %}
+        <form method="post" action="{{ url_for('follow_toggle', user_id=profile_user.id) }}">
+          {% if already_following %}
+            <button type="submit" class="btn btn-outline-glow"><i class="fa-solid fa-user-check me-1"></i> Following</button>
+          {% elif profile_user.allow_follow %}
+            <button type="submit" class="btn btn-glow"><i class="fa-solid fa-user-plus me-1"></i> Follow</button>
+          {% else %}
+            <button type="button" class="btn btn-outline-glow" disabled>Not accepting followers</button>
+          {% endif %}
+        </form>
+        {% elif not current_user.is_authenticated %}
+        <a href="{{ url_for('login') }}" class="btn btn-glow">Log in to follow</a>
+        {% endif %}
+      </div>
+
+      <div class="d-flex gap-4 mb-4" style="font-size:.9rem;">
+        <a href="{{ url_for('followers_list', username=profile_user.username) }}" class="text-dim">
+          <strong class="text-white">{{ profile_user.follower_count }}</strong> Followers
+        </a>
+        <a href="{{ url_for('following_list', username=profile_user.username) }}" class="text-dim">
+          <strong class="text-white">{{ profile_user.following_count }}</strong> Following
+        </a>
+        <span class="text-dim"><strong class="text-white">{{ profile_user.created_at.strftime('%b %Y') }}</strong> Joined</span>
+      </div>
+
+      {% if visible %}
+        {% if profile_user.bio %}
+        <p class="mb-4">{{ profile_user.bio }}</p>
+        {% endif %}
+
+        {% if profile_user.interests %}
+        <div class="mb-4">
+          <h6 class="mb-2 text-uppercase text-mono" style="font-size:.75rem;">Interests</h6>
+          <div class="d-flex flex-wrap gap-2">
+            {% for interest in profile_user.interests %}
+            <span class="badge-chip">{{ interest.emoji }} {{ interest.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if profile_user.user_badges %}
+        <div class="mb-4">
+          <h6 class="mb-2 text-uppercase text-mono" style="font-size:.75rem;">Badges</h6>
+          <div class="d-flex flex-wrap gap-2">
+            {% for ub in profile_user.user_badges %}
+            <span class="badge-chip" title="{{ ub.badge.description }}">{{ ub.badge.emoji }} {{ ub.badge.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if is_own %}
+        <div class="glass p-3 d-flex align-items-center gap-3">
+          <i class="fa-solid fa-ticket text-info fs-4"></i>
+          <div>
+            <strong>{{ events_attended }}</strong>
+            <span class="text-dim"> event{{ 's' if events_attended != 1 else '' }} attended</span>
+          </div>
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="glass p-4 text-center">
+          <i class="fa-solid fa-lock text-faint fs-3 mb-2 d-block"></i>
+          <p class="text-dim mb-0">
+            {% if profile_user.profile_visibility == 'private' %}
+              This profile is private.
+            {% else %}
+              This profile is only visible to followers.
+            {% endif %}
+          </p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+{% endblock %}

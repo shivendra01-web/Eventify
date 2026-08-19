@@ -1,0 +1,45 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manage Reviews — Admin{% endblock %}
+{% block admin_content %}
+<div class="mb-4 d-flex justify-content-between align-items-end flex-wrap gap-2" data-aos="fade-up">
+  <div>
+    <h2 class="section-title">Manage Reviews</h2>
+    <p class="text-dim mb-0">{{ reviews|length }} review(s) shown</p>
+  </div>
+  <div class="btn-group">
+    <a href="{{ url_for('admin_reviews') }}" class="btn btn-sm {{ 'btn-glow' if not reported_only else 'btn-outline-glow' }}">All</a>
+    <a href="{{ url_for('admin_reviews', reported=1) }}" class="btn btn-sm {{ 'btn-glow' if reported_only else 'btn-outline-glow' }}">Reported</a>
+  </div>
+</div>
+
+<div class="glass-card p-4" data-aos="fade-up">
+  <div class="table-responsive">
+    <table class="table table-glass mb-0">
+      <thead><tr><th>Event</th><th>Author</th><th>Rating</th><th>Review</th><th>Posted</th><th>Helpful</th><th>Reports</th><th></th></tr></thead>
+      <tbody>
+        {% for r in reviews %}
+        <tr>
+          <td><a href="{{ url_for('event_detail', event_id=r.event_id) }}#reviews" class="text-dim">{{ r.event.title }}</a></td>
+          <td>{{ r.user.name }}</td>
+          <td>{{ '★' * r.rating }}{{ '☆' * (5 - r.rating) }}</td>
+          <td style="max-width:280px;">{{ r.content or '—' }}</td>
+          <td class="text-faint" style="font-size:.82rem;">{{ r.created_at.strftime('%d %b %Y') }}</td>
+          <td>{{ r.helpful_count }}</td>
+          <td>
+            {% if r.report_count > 0 %}<span class="badge-status cancelled">{{ r.report_count }}</span>
+            {% else %}<span class="text-faint">0</span>{% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('admin_review_delete', review_id=r.id) }}" onsubmit="return confirm('Remove this review?');">
+              <button type="submit" class="btn btn-sm btn-outline-glow" style="border-color: var(--danger); color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-dim py-5">No reviews found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

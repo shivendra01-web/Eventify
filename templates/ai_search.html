@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Ask Eventify — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:760px;">
+    <div class="mb-4 text-center" data-aos="fade-up">
+      <h2 class="section-title">🤖 Ask Eventify</h2>
+      <p class="text-dim">Describe what you're looking for in plain English</p>
+    </div>
+
+    <form method="get" class="glass-card p-3 d-flex gap-2 mb-4" data-aos="fade-up">
+      <input type="text" name="q" value="{{ query }}" class="form-control form-control-glass"
+             placeholder="e.g. music events this weekend under ₹500 in Lucknow">
+      <button type="submit" class="btn btn-glow text-nowrap">Search</button>
+    </form>
+
+    {% if query %}
+      {% if filters and filters.matched_terms %}
+      <div class="glass p-3 mb-4" style="font-size:.85rem;" data-aos="fade-up">
+        <i class="fa-solid fa-wand-magic-sparkles me-1 text-info"></i>
+        Understood as: <strong>{{ filters.matched_terms|join(', ') }}</strong>
+        <span class="text-faint"> — matched by keyword, not a language model. </span>
+      </div>
+      {% else %}
+      <div class="glass p-3 mb-4 text-dim" style="font-size:.85rem;" data-aos="fade-up">
+        Didn't catch any specific filters in that — showing a plain keyword match instead.
+      </div>
+      {% endif %}
+
+      {% if results %}
+      <div class="row g-4">
+        {% for e in results %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+          {% include "_event_card.html" %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="glass-card p-5 text-center text-dim" data-aos="fade-up">
+        No events matched. Try a broader query, or <a href="{{ url_for('events') }}">browse all events</a>.
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="row g-3" data-aos="fade-up">
+        {% for example in [
+          'music events this weekend under ₹500',
+          'tech events this month in Lucknow',
+          'comedy shows under ₹500',
+          'sports events this Saturday',
+        ] %}
+        <div class="col-md-6">
+          <a href="{{ url_for('ai_search', q=example) }}" class="glass p-3 d-block text-decoration-none text-dim" style="font-size:.88rem;">
+            "{{ example }}"
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

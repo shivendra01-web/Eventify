@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Group Invitations — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container" style="max-width:560px;">
+    <div class="mb-4" data-aos="fade-up">
+      <h2 class="section-title mb-0">Group Invitations</h2>
+      <p class="text-dim mb-0">Groups people have invited you to join</p>
+    </div>
+
+    <div class="d-flex flex-column gap-3">
+      {% for inv in received %}
+      <div class="glass-card p-3" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <span class="fw-semibold">{{ inv.group.name }}</span>
+            <div class="text-faint" style="font-size:.78rem;">{{ inv.group.event.title }} · invited by {{ inv.invited_by.name }}</div>
+          </div>
+          <span class="badge-status {{ 'active' if inv.status == 'accepted' else ('cancelled' if inv.status == 'rejected' else 'disabled') }}" style="font-size:.7rem;">{{ inv.status|capitalize }}</span>
+        </div>
+        {% if inv.status == 'pending' %}
+        <div class="d-flex gap-2">
+          <form method="post" action="{{ url_for('group_invitation_respond', invite_id=inv.id) }}"><input type="hidden" name="action" value="accept"><button class="btn btn-glow btn-sm">Accept</button></form>
+          <form method="post" action="{{ url_for('group_invitation_respond', invite_id=inv.id) }}"><input type="hidden" name="action" value="reject"><button class="btn btn-ghost-sm">Decline</button></form>
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="glass-card p-5 text-center text-dim" data-aos="fade-up">No group invitations yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

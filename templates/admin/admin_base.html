@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block content %}
+<button id="sidebarToggle" class="btn btn-ghost-sm d-lg-none position-fixed" style="top:16px;left:16px;z-index:1100;"><i class="fa-solid fa-bars"></i></button>
+
+<aside class="admin-sidebar">
+  <a href="{{ url_for('admin_dashboard') }}" class="d-block mb-4 ps-2">
+    <span class="gradient-text fs-5 display-font">🎟️ EVENTIFY</span>
+    <div class="text-faint text-mono" style="font-size:.7rem;">ADMIN PANEL</div>
+  </a>
+  <nav class="d-flex flex-column">
+    <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-link {% if request.endpoint=='admin_dashboard' %}active{% endif %}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+    <a href="{{ url_for('admin_events') }}" class="admin-nav-link {% if request.endpoint in ['admin_events','admin_event_new','admin_event_edit'] %}active{% endif %}"><i class="fa-solid fa-calendar-days"></i> Events</a>
+    <a href="{{ url_for('admin_users') }}" class="admin-nav-link {% if request.endpoint=='admin_users' %}active{% endif %}"><i class="fa-solid fa-users"></i> Users</a>
+    <a href="{{ url_for('admin_organizers') }}" class="admin-nav-link {% if request.endpoint=='admin_organizers' %}active{% endif %}"><i class="fa-solid fa-user-tie"></i> Organizers</a>
+    <a href="{{ url_for('admin_bookings') }}" class="admin-nav-link {% if request.endpoint=='admin_bookings' %}active{% endif %}"><i class="fa-solid fa-receipt"></i> Bookings</a>
+    <a href="{{ url_for('admin_coupons') }}" class="admin-nav-link {% if request.endpoint=='admin_coupons' %}active{% endif %}"><i class="fa-solid fa-tags"></i> Coupons</a>
+    <a href="{{ url_for('admin_comments') }}" class="admin-nav-link {% if request.endpoint=='admin_comments' %}active{% endif %}"><i class="fa-solid fa-comments"></i> Comments</a>
+    <a href="{{ url_for('admin_reviews') }}" class="admin-nav-link {% if request.endpoint=='admin_reviews' %}active{% endif %}"><i class="fa-solid fa-star"></i> Reviews</a>
+    <a href="{{ url_for('admin_reports') }}" class="admin-nav-link {% if request.endpoint=='admin_reports' %}active{% endif %}"><i class="fa-solid fa-flag"></i> Reports Queue</a>
+    <a href="{{ url_for('admin_analytics') }}" class="admin-nav-link {% if request.endpoint=='admin_analytics' %}active{% endif %}"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+    <hr style="border-color: var(--border);">
+    <a href="{{ url_for('home') }}" class="admin-nav-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Site</a>
+    <a href="{{ url_for('admin_logout') }}" class="admin-nav-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </nav>
+</aside>
+
+<div class="admin-content">
+  {% block admin_content %}{% endblock %}
+</div>
+{% endblock %}

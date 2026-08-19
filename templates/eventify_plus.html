@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Eventify+ — Eventify{% endblock %}
+{% block content %}
+<section style="padding-top:120px;" class="pb-5">
+  <div class="container text-center" style="max-width:720px;">
+    <div data-aos="fade-up">
+      <span class="badge-status active" style="border-color:var(--border-glow);"><i class="fa-solid fa-crown me-1"></i> COMING SOON</span>
+      <h1 class="display-font mt-3 mb-3" style="font-size:2.4rem;">Eventify<span class="gradient-text">+</span></h1>
+      <p class="text-dim mb-5">A membership tier for the people who never miss a show.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+      {% for icon, title, desc in [
+        ('fa-bolt', 'Early Access', 'See new events before they go public.'),
+        ('fa-star', 'Exclusive Events', 'Members-only shows and experiences.'),
+        ('fa-percent', 'Reduced Fees', 'Lower convenience fees on every booking.'),
+        ('fa-ticket', 'Priority Booking', 'Skip the queue when tickets go live.'),
+        ('fa-gift', 'Bonus Points', 'Earn Eventify Points faster on every purchase.'),
+        ('fa-tags', 'Special Offers', 'Periodic partner discounts and perks.'),
+      ] %}
+      <div class="col-md-4" data-aos="fade-up">
+        <div class="glass-card p-4 h-100">
+          <i class="fa-solid {{ icon }} fs-3 text-warning mb-3"></i>
+          <h6>{{ title }}</h6>
+          <p class="text-dim mb-0" style="font-size:.85rem;">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="glass-card p-4" data-aos="fade-up">
+      <p class="text-dim mb-0" style="font-size:.85rem;">
+        Eventify+ billing isn't live yet — this page previews the benefits we're building toward.
+        {% if current_user.is_authenticated and current_user.is_plus %}
+        <br><span class="text-warning"><i class="fa-solid fa-crown me-1"></i>You currently have Eventify+ access (granted by an admin).</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,38 @@
+<div class="review-row">
+  <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
+       style="width:38px;height:38px;background:var(--grad-primary);color:#fff;font-size:.85rem;">
+    {{ rv.user.name[0]|upper }}
+  </div>
+  <div class="flex-grow-1">
+    <div class="d-flex align-items-baseline gap-2 flex-wrap">
+      <span class="fw-semibold" style="font-size:.9rem;">{{ rv.user.name }}</span>
+      <span class="badge-chip" style="font-size:.68rem;padding:2px 8px;"><i class="fa-solid fa-badge-check me-1"></i>Verified attendee</span>
+      <span class="text-faint" style="font-size:.76rem;">{{ rv.created_at.strftime('%d %b, %Y') }}</span>
+    </div>
+    <div class="text-warning mb-1" style="font-size:.85rem;">
+      {% for i in range(1,6) %}<i class="fa-solid fa-star{% if rv.rating < i %} text-faint{% endif %}"></i>{% endfor %}
+    </div>
+    {% if rv.content %}<p class="mb-1" style="font-size:.9rem;">{{ rv.content }}</p>{% endif %}
+    <div class="d-flex align-items-center gap-3" style="font-size:.78rem;">
+      <button type="button" class="review-helpful-btn text-dim border-0 bg-transparent p-0 {% if rv.marked_helpful_by(current_user) %}liked{% endif %}"
+              data-review-id="{{ rv.id }}" {% if not current_user.is_authenticated %}data-auth-required="true"{% endif %}>
+        <i class="{% if rv.marked_helpful_by(current_user) %}fa-solid{% else %}fa-regular{% endif %} fa-thumbs-up me-1"></i>
+        Helpful (<span class="helpful-count">{{ rv.helpful_count }}</span>)
+      </button>
+      {% if current_user.is_authenticated and current_user.id == rv.user_id %}
+      <form method="post" action="{{ url_for('review_delete', review_id=rv.id) }}" onsubmit="return confirm('Delete your review?');">
+        <button type="submit" class="text-dim border-0 bg-transparent p-0">Delete</button>
+      </form>
+      {% elif current_user.is_authenticated %}
+      <form method="post" action="{{ url_for('review_report', review_id=rv.id) }}" onsubmit="return confirm('Report this review?');">
+        <button type="submit" class="text-dim border-0 bg-transparent p-0">Report</button>
+      </form>
+      {% endif %}
+      {% if current_user.is_authenticated and current_user.is_admin and current_user.id != rv.user_id %}
+      <form method="post" action="{{ url_for('review_delete', review_id=rv.id) }}" onsubmit="return confirm('Remove this review as admin?');">
+        <button type="submit" class="text-danger border-0 bg-transparent p-0">Remove (admin)</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
