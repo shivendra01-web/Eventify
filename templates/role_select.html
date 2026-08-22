@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Eventify — Choose Your Portal{% endblock %}
+{% block title %}
+    Eventify — {% if mode == "signup" %}Create Your Account{% else %}Choose Your Portal{% endif %}
+{% endblock %}
 
 {% block content %}
 
@@ -8,22 +10,40 @@
     <div class="container">
 
         <div class="text-center mb-5">
+
             <div class="section-label">WELCOME TO EVENTIFY</div>
 
-            <h1 class="section-title mb-3">
-                How do you want to continue?
-            </h1>
+            {% if mode == "signup" %}
+                <h1 class="section-title mb-3">
+                    Create Your Eventify Account
+                </h1>
 
-            <p class="text-dim mx-auto" style="max-width:650px;">
-                Choose your Eventify experience. Whether you're attending an
-                event, organizing one, or managing the platform, we've got you covered.
-            </p>
+                <p class="text-dim mx-auto" style="max-width:650px;">
+                    Choose how you want to use Eventify and create the right
+                    account for your experience.
+                </p>
+            {% else %}
+                <h1 class="section-title mb-3">
+                    How do you want to continue?
+                </h1>
+
+                <p class="text-dim mx-auto" style="max-width:650px;">
+                    Choose your Eventify experience. Whether you're attending
+                    an event, organizing one, or managing the platform, we've
+                    got you covered.
+                </p>
+            {% endif %}
+
         </div>
+
 
         <div class="row g-4 justify-content-center">
 
-            <!-- USER -->
+
+            <!-- ================= USER ================= -->
+
             <div class="col-md-4">
+
                 <div class="glass-card feature-card h-100 text-center p-5">
 
                     <div class="icon-wrap mx-auto mb-4">
@@ -37,23 +57,51 @@
                         connect with people and enjoy unforgettable experiences.
                     </p>
 
-                    <a href="{{ url_for('login') }}"
-                       class="btn btn-glow w-100">
-                        User Login
-                        <i class="fa-solid fa-arrow-right ms-1"></i>
-                    </a>
 
-                    <p class="text-faint mt-3 mb-0" style="font-size:.85rem;">
-                        Don't have an account?
-                        <a href="{{ url_for('register') }}">Sign Up</a>
-                    </p>
+                    {% if mode == "signup" %}
+
+                        <a href="{{ url_for('register') }}"
+                           class="btn btn-glow w-100">
+
+                            Create User Account
+                            <i class="fa-solid fa-user-plus ms-1"></i>
+
+                        </a>
+
+                        <p class="text-faint mt-3 mb-0" style="font-size:.85rem;">
+                            Already have an account?
+                            <a href="{{ url_for('login') }}">Login</a>
+                        </p>
+
+                    {% else %}
+
+                        <a href="{{ url_for('login') }}"
+                           class="btn btn-glow w-100">
+
+                            User Login
+                            <i class="fa-solid fa-arrow-right ms-1"></i>
+
+                        </a>
+
+                        <p class="text-faint mt-3 mb-0" style="font-size:.85rem;">
+                            Don't have an account?
+                            <a href="{{ url_for('portal', mode='signup') }}">
+                                Sign Up
+                            </a>
+                        </p>
+
+                    {% endif %}
 
                 </div>
+
             </div>
 
 
-            <!-- ORGANIZER -->
+
+            <!-- ================= ORGANIZER ================= -->
+
             <div class="col-md-4">
+
                 <div class="glass-card feature-card h-100 text-center p-5">
 
                     <div class="icon-wrap mx-auto mb-4">
@@ -67,18 +115,53 @@
                         control livestreams and manage your events.
                     </p>
 
-                    <a href="{{ url_for('organizer_login') }}"
-                       class="btn btn-glow w-100">
-                        Organizer Login
-                        <i class="fa-solid fa-arrow-right ms-1"></i>
-                    </a>
+
+                    {% if mode == "signup" %}
+
+                        <a href="{{ url_for('organizer_register') }}"
+                           class="btn btn-glow w-100">
+
+                            Become an Organizer
+                            <i class="fa-solid fa-calendar-plus ms-1"></i>
+
+                        </a>
+
+                        <p class="text-faint mt-3 mb-0" style="font-size:.85rem;">
+                            Already an organizer?
+                            <a href="{{ url_for('organizer_login') }}">
+                                Login
+                            </a>
+                        </p>
+
+                    {% else %}
+
+                        <a href="{{ url_for('organizer_login') }}"
+                           class="btn btn-glow w-100">
+
+                            Organizer Login
+                            <i class="fa-solid fa-arrow-right ms-1"></i>
+
+                        </a>
+
+                        <p class="text-faint mt-3 mb-0" style="font-size:.85rem;">
+                            New organizer?
+                            <a href="{{ url_for('portal', mode='signup') }}">
+                                Register
+                            </a>
+                        </p>
+
+                    {% endif %}
 
                 </div>
+
             </div>
 
 
-            <!-- ADMIN -->
+
+            <!-- ================= ADMIN ================= -->
+
             <div class="col-md-4">
+
                 <div class="glass-card feature-card h-100 text-center p-5">
 
                     <div class="icon-wrap mx-auto mb-4">
@@ -92,22 +175,101 @@
                         reviews, coupons, analytics and the Eventify platform.
                     </p>
 
-                    <a href="{{ url_for('admin_login') }}"
-                       class="btn btn-glow w-100">
-                        Admin Login
-                        <i class="fa-solid fa-arrow-right ms-1"></i>
-                    </a>
+
+                    {% if mode == "signup" %}
+
+                        <div class="p-3"
+                             style="
+                                border:1px solid rgba(255,255,255,.12);
+                                border-radius:16px;
+                                background:rgba(255,255,255,.04);
+                             ">
+
+                            <i class="fa-solid fa-lock mb-2"
+                               style="font-size:1.4rem;"></i>
+
+                            <div class="fw-semibold mb-1">
+                                Admin Registration Restricted
+                            </div>
+
+                            <div class="text-faint"
+                                 style="font-size:.82rem;">
+                                Admin accounts are created and managed
+                                by Eventify.
+                            </div>
+
+                        </div>
+
+                        <a href="{{ url_for('admin_login') }}"
+                           class="btn btn-outline-glow w-100 mt-3">
+
+                            Admin Login
+                            <i class="fa-solid fa-shield-halved ms-1"></i>
+
+                        </a>
+
+                    {% else %}
+
+                        <a href="{{ url_for('admin_login') }}"
+                           class="btn btn-glow w-100">
+
+                            Admin Login
+                            <i class="fa-solid fa-arrow-right ms-1"></i>
+
+                        </a>
+
+                        <p class="text-faint mt-3 mb-0"
+                           style="font-size:.85rem;">
+
+                            Authorized Eventify administrators only.
+
+                        </p>
+
+                    {% endif %}
 
                 </div>
+
             </div>
 
         </div>
 
+
+
+        <!-- ================= BOTTOM NAV ================= -->
+
         <div class="text-center mt-5">
-            <a href="{{ url_for('home') }}" class="btn btn-outline-glow">
+
+            {% if mode == "signup" %}
+
+                <a href="{{ url_for('portal', mode='login') }}"
+                   class="btn btn-outline-glow me-2">
+
+                    <i class="fa-solid fa-right-to-bracket me-1"></i>
+                    Already have an account? Login
+
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('portal', mode='signup') }}"
+                   class="btn btn-outline-glow me-2">
+
+                    <i class="fa-solid fa-user-plus me-1"></i>
+                    New to Eventify? Sign Up
+
+                </a>
+
+            {% endif %}
+
+
+            <a href="{{ url_for('home') }}"
+               class="btn btn-outline-glow">
+
                 <i class="fa-solid fa-house me-1"></i>
                 Continue to Eventify
+
             </a>
+
         </div>
 
     </div>

@@ -424,7 +424,7 @@
 
                 <!-- Login -->
                 <a
-                    href="{{ url_for('portal') }}"
+                    href="{{ url_for('portal', mode='login') }}"
                     class="btn btn-outline-glow">
 
                     Login
@@ -434,7 +434,7 @@
 
                 <!-- Register -->
                 <a
-                    href="{{ url_for('register') }}"
+                    href="{{ url_for('portal', mode='signup') }}"
                     class="btn btn-glow">
 
                     Sign Up

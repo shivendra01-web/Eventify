@@ -591,8 +591,6 @@ def inject_globals():
 
 # ---------- public pages ----------
 
-# ---------- public pages ----------
-
 @app.route("/")
 def home():
     categories = Category.query.all()
@@ -667,7 +665,12 @@ def home():
 
 @app.route("/portal")
 def portal():
-    return render_template("role_select.html")
+    mode = request.args.get("mode", "login").lower()
+
+    if mode not in {"login", "signup"}:
+        mode = "login"
+
+    return render_template("role_select.html", mode=mode)
 
 
 AI_CATEGORY_SYNONYMS = {
@@ -2686,23 +2689,94 @@ def admin_logout():
 
 # ---------- organizer ----------
 
+@app.route("/organizer/register", methods=["GET", "POST"])
+def organizer_register():
+    if current_user.is_authenticated:
+        if current_user.role == "organizer":
+            return redirect(url_for("organizer_dashboard"))
+        return redirect(url_for("home"))
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm_password", "")
+
+        error = None
+
+        if not name or not email or not password:
+            error = "Please fill in all required fields."
+        elif password != confirm:
+            error = "Passwords do not match."
+        elif len(password) < 6:
+            error = "Password must be at least 6 characters."
+        elif User.query.filter_by(email=email).first():
+            error = "An account with this email already exists."
+
+        if error:
+            flash(error, "danger")
+            return render_template(
+                "organizer/register.html",
+                form=request.form
+            )
+
+        organizer = User(
+            name=name,
+            email=email,
+            phone=phone,
+            role="organizer",
+            status="active"
+        )
+
+        organizer.set_password(password)
+        organizer.username = generate_username(email)
+        organizer.referral_code = generate_referral_code()
+
+        db.session.add(organizer)
+        db.session.commit()
+
+        flash(
+            "Organizer account created successfully. Please log in.",
+            "success"
+        )
+
+        return redirect(url_for("organizer_login"))
+
+    return render_template(
+        "organizer/register.html",
+        form={}
+    )
+
 @app.route("/organizer/login", methods=["GET", "POST"])
 def organizer_login():
     if current_user.is_authenticated and current_user.role == "organizer":
         return redirect(url_for("organizer_dashboard"))
+
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
-        organizer = User.query.filter_by(email=email, role="organizer").first()
+
+        organizer = User.query.filter_by(
+            email=email,
+            role="organizer"
+        ).first()
+
         if organizer and organizer.check_password(password):
+
             if organizer.status == "disabled":
-                flash("Your organizer account has been disabled. Contact Eventify support.", "danger")
+                flash(
+                    "Your organizer account has been disabled. Contact Eventify support.",
+                    "danger"
+                )
                 return render_template("organizer/login.html")
+
             login_user(organizer)
             return redirect(url_for("organizer_dashboard"))
-        flash("Invalid organizer credentials.", "danger")
-    return render_template("organizer/login.html")
 
+        flash("Invalid organizer credentials.", "danger")
+
+    return render_template("organizer/login.html")
 
 @app.route("/organizer/logout")
 @login_required

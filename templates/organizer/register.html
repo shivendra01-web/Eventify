@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Eventify — Organizer Sign Up{% endblock %}
+
+{% block content %}
+
+<section class="section" style="min-height:80vh;display:flex;align-items:center;">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="glass-card p-5">
+
+                    <div class="text-center mb-4">
+
+                        <div class="icon-wrap mx-auto mb-3">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                        </div>
+
+                        <div class="section-label">
+                            EVENTIFY ORGANIZER
+                        </div>
+
+                        <h1 class="section-title mb-3">
+                            Become an Organizer
+                        </h1>
+
+                        <p class="text-dim">
+                            Create and manage events, tickets, attendees
+                            and livestream experiences on Eventify.
+                        </p>
+
+                    </div>
+
+                    <form method="POST">
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Full Name
+                            </label>
+
+                            <input
+                                type="text"
+                                name="name"
+                                class="form-control form-control-glass"
+                                value="{{ form.get('name', '') }}"
+                                placeholder="Your full name"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                class="form-control form-control-glass"
+                                value="{{ form.get('email', '') }}"
+                                placeholder="you@organization.com"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Phone
+                            </label>
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                class="form-control form-control-glass"
+                                value="{{ form.get('phone', '') }}"
+                                placeholder="Your phone number">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Password
+                            </label>
+
+                            <input
+                                type="password"
+                                name="password"
+                                class="form-control form-control-glass"
+                                placeholder="At least 6 characters"
+                                required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                Confirm Password
+                            </label>
+
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                class="form-control form-control-glass"
+                                placeholder="Confirm your password"
+                                required>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-glow w-100">
+
+                            Create Organizer Account
+                            <i class="fa-solid fa-arrow-right ms-1"></i>
+
+                        </button>
+
+                    </form>
+
+                    <div class="text-center mt-4">
+
+                        <p class="text-faint mb-2">
+                            Already an organizer?
+                        </p>
+
+                        <a
+                            href="{{ url_for('organizer_login') }}"
+                            class="btn btn-outline-glow">
+
+                            Organizer Login
+
+                        </a>
+
+                    </div>
+
+                    <div class="text-center mt-3">
+
+                        <a
+                            href="{{ url_for('portal', mode='signup') }}"
+                            class="text-dim">
+
+                            ← Back to Sign Up Options
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
