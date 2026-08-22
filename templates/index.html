@@ -1,312 +1,4528 @@
 {% extends "base.html" %}
+
 {% block content %}
 
-<!-- HERO -->
-<section class="hero">
-  <div class="container position-relative">
-    <div class="row align-items-center">
-      <div class="col-lg-7" data-aos="fade-right">
-        <div class="hero-eyebrow mb-4"><i class="fa-solid fa-sparkles"></i> Discover · Book · Experience</div>
-        <h1 class="hero-title mb-4">Discover Events.<br><span class="gradient-text">Create Memories.</span></h1>
-        <p class="hero-sub mb-4">Discover concerts, conferences, workshops, sports events, cultural
-          programs and more — then book your seat in a few taps.</p>
-        <div class="d-flex gap-3 flex-wrap">
-          <a href="{{ url_for('events') }}" class="btn btn-glow btn-lg">Explore Events <i class="fa-solid fa-arrow-right ms-1"></i></a>
-          <a href="#categories" class="btn btn-outline-glow btn-lg">Browse Categories</a>
-        </div>
-      </div>
-      <div class="col-lg-5 d-none d-lg-block position-relative" style="height:420px;" data-aos="fade-left">
-        <div class="hero-scene" aria-hidden="true">
-          <div class="beam beam-1"></div>
-          <div class="beam beam-2"></div>
-          <div class="beam beam-3"></div>
-          <div class="beam beam-4"></div>
-          <div class="skyline"></div>
-          <div class="crowd"></div>
-          <div class="ember"></div><div class="ember"></div><div class="ember"></div><div class="ember"></div>
-        </div>
-        <div class="glass-card ticket-notch hero-float-card p-3" style="width:230px; top:10px; right:40px;">
-          <div class="tear-line mb-2"></div>
-          <span class="cat-badge d-inline-block mb-2" style="position:static;">Music</span>
-          <h6 class="mb-1">Music Night 2026</h6>
-          <p class="text-faint mb-0" style="font-size:.8rem;"><i class="fa-regular fa-calendar me-1"></i> Lucknow</p>
-        </div>
-        <div class="glass-card ticket-notch hero-float-card p-3" style="width:210px; bottom:60px; left:0px; animation-delay:-2s;">
-          <div class="tear-line mb-2"></div>
-          <span class="cat-badge d-inline-block mb-2" style="position:static;">Technology</span>
-          <h6 class="mb-1">Future Tech Conf</h6>
-          <p class="text-faint mb-0" style="font-size:.8rem;"><i class="fa-regular fa-calendar me-1"></i> 25 days left</p>
-        </div>
-        <div class="glass-card ticket-notch hero-float-card p-3" style="width:190px; top:180px; right:0px; animation-delay:-4s;">
-          <div class="tear-line mb-2"></div>
-          <span class="cat-badge d-inline-block mb-2" style="position:static;">Sports</span>
-          <h6 class="mb-1 mb-0">Sports Fest</h6>
-        </div>
-      </div>
+<style>
+
+/* ============================================================
+   EVENTIFY 2.0 — ELECTRIC VIOLET PULSE
+   FINAL POLISHED HOMEPAGE
+   LIGHTER DARK-VIOLET ATMOSPHERE + MUSIC EXPERIENCE
+   ============================================================ */
+
+:root {
+    --ev-violet: #7148ff;
+    --ev-purple: #8b5cf6;
+    --ev-magenta: #c83bd4;
+    --ev-pink: #ec4899;
+    --ev-blue: #38bdf8;
+
+    --ev-bg: #e9e5f8;
+    --ev-surface: #ffffff;
+    --ev-surface-soft: #f2efff;
+
+    --ev-text: #17142d;
+    --ev-text-soft: #66627c;
+
+    --ev-border: rgba(109, 74, 255, 0.14);
+
+    --ev-gradient:
+        linear-gradient(
+            135deg,
+            #6847f5 0%,
+            #8458f5 42%,
+            #c83bd4 72%,
+            #ec4899 100%
+        );
+
+    --ev-background:
+        radial-gradient(
+            circle at 8% 12%,
+            rgba(108, 72, 245, .30),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 92% 16%,
+            rgba(200, 59, 212, .23),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 70% 65%,
+            rgba(236, 72, 153, .17),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(56, 189, 248, .10),
+            transparent 27%
+        ),
+        linear-gradient(
+            135deg,
+            #e6e1f7 0%,
+            #eee8fa 38%,
+            #e9e1f5 68%,
+            #f3e5f0 100%
+        );
+
+    --ev-shadow:
+        0 20px 60px rgba(64, 48, 130, .14);
+
+    --ev-glow:
+        0 10px 35px rgba(109, 74, 255, .28);
+
+    --ev-radius-lg: 28px;
+    --ev-radius-md: 20px;
+    --ev-radius-sm: 14px;
+}
+
+
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+.eventify-page {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 100vh;
+
+    background: var(--ev-background);
+
+    color: var(--ev-text);
+}
+
+.eventify-page * {
+    box-sizing: border-box;
+}
+
+.eventify-container {
+    width: min(1180px, calc(100% - 40px));
+    margin: auto;
+}
+
+
+/* ============================================================
+   SOFT DARKER ATMOSPHERE
+   ============================================================ */
+
+.eventify-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 700px;
+    height: 700px;
+
+    top: 30px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(98, 67, 214, .12),
+            transparent 68%
+        );
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* ============================================================
+   FLOATING GLOW ORBS
+   ============================================================ */
+
+.ev-orb {
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    filter: blur(2px);
+
+    opacity: .6;
+
+    z-index: 0;
+}
+
+.ev-orb-1 {
+    width: 280px;
+    height: 280px;
+
+    top: 70px;
+    left: -130px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(91, 65, 220, .27),
+            transparent 70%
+        );
+
+    animation: evFloatOne 10s ease-in-out infinite;
+}
+
+.ev-orb-2 {
+    width: 340px;
+    height: 340px;
+
+    top: 260px;
+    right: -170px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(209, 57, 190, .22),
+            transparent 70%
+        );
+
+    animation: evFloatTwo 12s ease-in-out infinite;
+}
+
+.ev-orb-3 {
+    width: 240px;
+    height: 240px;
+
+    top: 700px;
+    left: 40%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(56,189,248,.12),
+            transparent 70%
+        );
+
+    animation: evFloatThree 14s ease-in-out infinite;
+}
+
+@keyframes evFloatOne {
+    0%,100% {
+        transform: translate(0,0);
+    }
+
+    50% {
+        transform: translate(25px,35px);
+    }
+}
+
+@keyframes evFloatTwo {
+    0%,100% {
+        transform: translate(0,0);
+    }
+
+    50% {
+        transform: translate(-30px,25px);
+    }
+}
+
+@keyframes evFloatThree {
+    0%,100% {
+        transform: translate(0,0);
+    }
+
+    50% {
+        transform: translate(20px,-25px);
+    }
+}
+
+
+/* ============================================================
+   CRYSTAL BUBBLES
+   ============================================================ */
+
+.ev-bubble {
+    position: absolute;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            rgba(255,255,255,.95),
+            rgba(255,255,255,.25) 18%,
+            rgba(139,92,246,.10) 55%,
+            rgba(236,72,153,.05) 75%,
+            transparent 100%
+        );
+
+    border: 1px solid rgba(255,255,255,.72);
+
+    box-shadow:
+        inset -8px -10px 25px rgba(109,74,255,.08),
+        inset 8px 8px 20px rgba(255,255,255,.65),
+        0 15px 45px rgba(109,74,255,.10);
+
+    backdrop-filter: blur(5px);
+}
+
+.ev-bubble::after {
+    content: "";
+
+    position: absolute;
+
+    width: 24%;
+    height: 24%;
+
+    top: 15%;
+    left: 19%;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.8);
+
+    filter: blur(2px);
+}
+
+.ev-bubble-1 {
+    width: 82px;
+    height: 82px;
+
+    top: 170px;
+    left: 6%;
+
+    animation:
+        bubbleFloat 7s ease-in-out infinite;
+}
+
+.ev-bubble-2 {
+    width: 48px;
+    height: 48px;
+
+    top: 330px;
+    right: 12%;
+
+    animation:
+        bubbleFloat 9s ease-in-out infinite reverse;
+}
+
+.ev-bubble-3 {
+    width: 110px;
+    height: 110px;
+
+    top: 560px;
+    right: 3%;
+
+    animation:
+        bubbleFloat 11s ease-in-out infinite;
+}
+
+.ev-bubble-4 {
+    width: 38px;
+    height: 38px;
+
+    top: 720px;
+    left: 12%;
+
+    animation:
+        bubbleFloat 8s ease-in-out infinite reverse;
+}
+
+@keyframes bubbleFloat {
+
+    0%,100% {
+        transform:
+            translateY(0)
+            rotate(0deg);
+    }
+
+    50% {
+        transform:
+            translateY(-25px)
+            rotate(8deg);
+    }
+}
+
+
+/* ============================================================
+   MUSIC FLOATING ELEMENTS
+   ============================================================ */
+
+.ev-music-element {
+    position: absolute;
+
+    z-index: 4;
+
+    display: grid;
+
+    place-items: center;
+
+    color: rgba(101, 70, 220, .72);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.70),
+            rgba(238,232,255,.48)
+        );
+
+    border: 1px solid rgba(255,255,255,.82);
+
+    backdrop-filter: blur(12px);
+
+    box-shadow:
+        0 14px 35px rgba(80,60,160,.10),
+        inset 0 1px 0 rgba(255,255,255,.85);
+
+    pointer-events: none;
+
+    animation:
+        musicFloat 7s ease-in-out infinite;
+}
+
+.ev-music-icon {
+    font-size: 24px;
+
+    filter:
+        drop-shadow(
+            0 5px 12px
+            rgba(109,74,255,.20)
+        );
+}
+
+
+/* Headphones */
+
+.ev-music-headphones {
+    width: 62px;
+    height: 62px;
+
+    border-radius: 21px;
+
+    top: 145px;
+    right: 4%;
+
+    animation-delay: -.5s;
+}
+
+
+/* Microphone */
+
+.ev-music-mic {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 18px;
+
+    top: 410px;
+    left: 2%;
+
+    animation-delay: -2s;
+}
+
+
+/* Music note */
+
+.ev-music-note {
+    width: 43px;
+    height: 43px;
+
+    border-radius: 15px;
+
+    top: 270px;
+    left: 48%;
+
+    animation-delay: -3s;
+}
+
+
+/* Speaker */
+
+.ev-music-speaker {
+    width: 68px;
+    height: 68px;
+
+    border-radius: 22px;
+
+    bottom: 95px;
+    left: 4%;
+
+    animation-delay: -1.5s;
+}
+
+
+/* Guitar */
+
+.ev-music-guitar {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 18px;
+
+    bottom: 50px;
+    right: 12%;
+
+    animation-delay: -4s;
+}
+
+
+/* Music keyboard */
+
+.ev-music-keyboard {
+    width: 76px;
+    height: 45px;
+
+    border-radius: 14px;
+
+    top: 560px;
+    left: 43%;
+
+    animation-delay: -5s;
+}
+
+@keyframes musicFloat {
+
+    0%,100% {
+        transform:
+            translateY(0)
+            rotate(-2deg);
+    }
+
+    50% {
+        transform:
+            translateY(-15px)
+            rotate(3deg);
+    }
+}
+
+
+/* ============================================================
+   MUSIC PULSE RINGS
+   ============================================================ */
+
+.ev-music-pulse {
+    position: absolute;
+
+    width: 170px;
+    height: 170px;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(109,74,255,.10);
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    animation:
+        musicPulse 4s ease-out infinite;
+}
+
+.ev-music-pulse::before,
+.ev-music-pulse::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 18px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(200,59,212,.09);
+}
+
+.ev-music-pulse::after {
+    inset: 38px;
+
+    border-color:
+        rgba(236,72,153,.08);
+}
+
+@keyframes musicPulse {
+
+    0% {
+        transform:
+            translate(-50%,-50%)
+            scale(.75);
+
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translate(-50%,-50%)
+            scale(1.45);
+
+        opacity: 0;
+    }
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.ev-hero {
+    position: relative;
+
+    min-height: 700px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        90px 0
+        100px;
+
+    z-index: 2;
+}
+
+.ev-hero-grid {
+
+    position: relative;
+
+    z-index: 3;
+
+    display: grid;
+
+    grid-template-columns:
+        1.05fr .95fr;
+
+    gap: 60px;
+
+    align-items: center;
+}
+
+
+/* ============================================================
+   HERO CONTENT
+   ============================================================ */
+
+.ev-hero-content {
+    position: relative;
+
+    z-index: 5;
+}
+
+.ev-eyebrow {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding:
+        9px 15px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(255,255,255,.74);
+
+    border:
+        1px solid
+        rgba(109,74,255,.14);
+
+    box-shadow:
+        0 8px 25px
+        rgba(80,60,160,.08);
+
+    color:
+        var(--ev-violet);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: .13em;
+
+    text-transform: uppercase;
+}
+
+.ev-pulse-dot {
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background:
+        var(--ev-violet);
+
+    box-shadow:
+        0 0 0 6px
+        rgba(109,74,255,.10);
+
+    animation:
+        pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+
+    0%,100% {
+        box-shadow:
+            0 0 0 5px
+            rgba(109,74,255,.10);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 10px
+            rgba(109,74,255,.02);
+    }
+}
+
+.ev-hero-title {
+
+    margin:
+        25px 0 22px;
+
+    font-size:
+        clamp(48px,6vw,78px);
+
+    line-height:
+        .98;
+
+    letter-spacing:
+        -.055em;
+
+    font-weight:
+        900;
+}
+
+.ev-gradient-text {
+
+    background:
+        var(--ev-gradient);
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    color:
+        transparent;
+}
+
+.ev-hero-description {
+
+    max-width:
+        610px;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        18px;
+
+    line-height:
+        1.75;
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.ev-hero-actions {
+
+    display:
+        flex;
+
+    gap:
+        14px;
+
+    flex-wrap:
+        wrap;
+
+    margin-top:
+        32px;
+}
+
+.ev-btn-primary,
+.ev-btn-secondary {
+
+    min-height:
+        52px;
+
+    padding:
+        0 23px;
+
+    border-radius:
+        15px;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        9px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+    text-decoration:
+        none;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+.ev-btn-primary {
+
+    color:
+        white;
+
+    background:
+        var(--ev-gradient);
+
+    box-shadow:
+        0 12px 30px
+        rgba(109,74,255,.25),
+
+        0 4px 12px
+        rgba(236,72,153,.10);
+}
+
+.ev-btn-primary:hover {
+
+    color:
+        white;
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 18px 40px
+        rgba(109,74,255,.34),
+
+        0 7px 20px
+        rgba(236,72,153,.15);
+}
+
+.ev-btn-secondary {
+
+    color:
+        var(--ev-text);
+
+    background:
+        rgba(255,255,255,.78);
+
+    border:
+        1px solid
+        rgba(109,74,255,.14);
+
+    box-shadow:
+        0 8px 25px
+        rgba(80,60,160,.07);
+}
+
+.ev-btn-secondary:hover {
+
+    color:
+        var(--ev-violet);
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        var(--ev-shadow);
+}
+
+
+/* ============================================================
+   HERO STATS
+   ============================================================ */
+
+.ev-hero-stats {
+
+    display:
+        flex;
+
+    gap:
+        30px;
+
+    margin-top:
+        42px;
+}
+
+.ev-stat {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+}
+
+.ev-stat-number {
+
+    font-size:
+        21px;
+
+    font-weight:
+        900;
+}
+
+.ev-stat-label {
+
+    font-size:
+        12px;
+
+    color:
+        var(--ev-text-soft);
+}
+
+
+/* ============================================================
+   HERO VISUAL
+   ============================================================ */
+
+.ev-visual {
+
+    position:
+        relative;
+
+    min-height:
+        500px;
+}
+
+.ev-visual-glow {
+
+    position:
+        absolute;
+
+    width:
+        390px;
+
+    height:
+        390px;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(109,74,255,.22),
+            rgba(192,38,211,.10) 45%,
+            transparent 70%
+        );
+
+    filter:
+        blur(8px);
+}
+
+
+/* ============================================================
+   FLOATING TICKET
+   ============================================================ */
+
+.ev-ticket {
+
+    position:
+        absolute;
+
+    width:
+        min(410px,85%);
+
+    min-height:
+        245px;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    transform:
+        translate(-50%,-50%)
+        rotate(-4deg);
+
+    padding:
+        25px;
+
+    border-radius:
+        28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.90),
+            rgba(245,241,255,.82)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    box-shadow:
+        0 35px 80px
+        rgba(72,52,160,.19),
+
+        0 8px 30px
+        rgba(109,74,255,.10);
+
+    backdrop-filter:
+        blur(18px);
+
+    animation:
+        ticketFloat 6s ease-in-out infinite;
+
+    overflow:
+        hidden;
+}
+
+.ev-ticket::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        230px;
+
+    height:
+        230px;
+
+    right:
+        -90px;
+
+    top:
+        -100px;
+
+    border-radius:
+        50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(236,72,153,.18),
+            transparent 70%
+        );
+}
+
+.ev-ticket::after {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    border-radius:
+        inherit;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent 35%,
+            rgba(255,255,255,.45) 50%,
+            transparent 65%
+        );
+
+    transform:
+        translateX(-120%);
+
+    animation:
+        ticketShine 5s ease-in-out infinite;
+}
+
+@keyframes ticketFloat {
+
+    0%,100% {
+        transform:
+            translate(-50%,-50%)
+            rotate(-4deg);
+    }
+
+    50% {
+        transform:
+            translate(-50%,calc(-50% - 16px))
+            rotate(2deg);
+    }
+}
+
+@keyframes ticketShine {
+
+    0%,55% {
+        transform:
+            translateX(-120%);
+    }
+
+    75%,100% {
+        transform:
+            translateX(120%);
+    }
+}
+
+.ev-ticket-top {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+}
+
+.ev-ticket-brand {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    font-weight:
+        900;
+
+    font-size:
+        15px;
+}
+
+.ev-ticket-logo {
+
+    width:
+        35px;
+
+    height:
+        35px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        11px;
+
+    color:
+        white;
+
+    background:
+        var(--ev-gradient);
+
+    box-shadow:
+        var(--ev-glow);
+}
+
+.ev-ticket-live {
+
+    padding:
+        6px 10px;
+
+    border-radius:
+        999px;
+
+    color:
+        var(--ev-violet);
+
+    background:
+        rgba(109,74,255,.08);
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        .08em;
+}
+
+.ev-ticket-main {
+
+    margin-top:
+        28px;
+}
+
+.ev-ticket-label {
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        10px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .12em;
+
+    font-weight:
+        800;
+}
+
+.ev-ticket-title {
+
+    margin-top:
+        7px;
+
+    font-size:
+        28px;
+
+    font-weight:
+        900;
+}
+
+.ev-ticket-meta {
+
+    display:
+        flex;
+
+    gap:
+        20px;
+
+    margin-top:
+        17px;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        11px;
+}
+
+.ev-ticket-bottom {
+
+    position:
+        absolute;
+
+    bottom:
+        19px;
+
+    left:
+        25px;
+
+    right:
+        25px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding-top:
+        14px;
+
+    border-top:
+        1px dashed
+        rgba(109,74,255,.18);
+}
+
+.ev-ticket-id {
+
+    font-size:
+        10px;
+
+    color:
+        var(--ev-text-soft);
+}
+
+.ev-ticket-qr {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    border-radius:
+        8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--ev-text) 3px,
+            transparent 3px
+        ),
+
+        linear-gradient(
+            var(--ev-text) 3px,
+            transparent 3px
+        );
+
+    background-size:
+        9px 9px;
+
+    opacity:
+        .72;
+}
+
+
+/* ============================================================
+   MINI FLOATING CARDS
+   ============================================================ */
+
+.ev-mini-card {
+
+    position:
+        absolute;
+
+    padding:
+        13px 15px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    background:
+        rgba(255,255,255,.88);
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius:
+        17px;
+
+    box-shadow:
+        0 20px 45px
+        rgba(72,52,160,.12);
+
+    backdrop-filter:
+        blur(15px);
+
+    z-index:
+        5;
+
+    font-size:
+        11px;
+}
+
+.ev-mini-icon {
+
+    width:
+        37px;
+
+    height:
+        37px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        12px;
+
+    background:
+        var(--ev-gradient);
+
+    color:
+        white;
+
+    font-size:
+        16px;
+}
+
+.ev-mini-card strong {
+
+    display:
+        block;
+
+    font-size:
+        12px;
+}
+
+.ev-mini-card span {
+
+    display:
+        block;
+
+    margin-top:
+        3px;
+
+    color:
+        var(--ev-text-soft);
+}
+
+.ev-mini-one {
+
+    left:
+        0;
+
+    top:
+        80px;
+
+    animation:
+        miniOne 5s ease-in-out infinite;
+}
+
+.ev-mini-two {
+
+    right:
+        -10px;
+
+    bottom:
+        75px;
+
+    animation:
+        miniTwo 6s ease-in-out infinite;
+}
+
+@keyframes miniOne {
+
+    0%,100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-12px);
+    }
+}
+
+@keyframes miniTwo {
+
+    0%,100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(12px);
+    }
+}
+
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+.ev-search-wrap {
+
+    position:
+        relative;
+
+    z-index:
+        10;
+
+    margin-top:
+        -30px;
+}
+
+.ev-search-card {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1.6fr 1fr 1fr auto;
+
+    gap:
+        8px;
+
+    padding:
+        10px;
+
+    background:
+        rgba(255,255,255,.92);
+
+    border:
+        1px solid
+        rgba(109,74,255,.10);
+
+    border-radius:
+        23px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(70,50,150,.14);
+
+    backdrop-filter:
+        blur(20px);
+}
+
+.ev-search-field {
+
+    min-height:
+        57px;
+
+    padding:
+        0 17px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        11px;
+
+    border-radius:
+        15px;
+
+    background:
+        #faf9ff;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        13px;
+}
+
+.ev-search-field input {
+
+    width:
+        100%;
+
+    border:
+        0;
+
+    outline:
+        0;
+
+    background:
+        transparent;
+
+    color:
+        var(--ev-text);
+
+    font:
+        inherit;
+}
+
+.ev-search-field input::placeholder {
+
+    color:
+        #9692aa;
+}
+
+.ev-search-btn {
+
+    min-width:
+        135px;
+
+    border:
+        0;
+
+    border-radius:
+        15px;
+
+    color:
+        white;
+
+    background:
+        var(--ev-gradient);
+
+    font-weight:
+        800;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        var(--ev-glow);
+
+    transition:
+        .25s ease;
+}
+
+.ev-search-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(109,74,255,.30);
+}
+
+
+/* ============================================================
+   SECTION
+   ============================================================ */
+
+.ev-section {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    padding:
+        90px 0;
+}
+
+.ev-section-heading {
+
+    display:
+        flex;
+
+    align-items:
+        flex-end;
+
+    justify-content:
+        space-between;
+
+    gap:
+        25px;
+
+    margin-bottom:
+        32px;
+}
+
+.ev-section-kicker {
+
+    margin-bottom:
+        8px;
+
+    color:
+        var(--ev-violet);
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+}
+
+.ev-section-title {
+
+    margin:
+        0;
+
+    font-size:
+        clamp(30px,4vw,44px);
+
+    line-height:
+        1.05;
+
+    letter-spacing:
+        -.04em;
+
+    font-weight:
+        900;
+}
+
+.ev-section-description {
+
+    max-width:
+        520px;
+
+    color:
+        var(--ev-text-soft);
+
+    line-height:
+        1.7;
+
+    font-size:
+        14px;
+}
+
+.ev-see-all {
+
+    color:
+        var(--ev-violet);
+
+    text-decoration:
+        none;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+}
+
+.ev-see-all:hover {
+
+    text-decoration:
+        underline;
+}
+
+
+/* ============================================================
+   CATEGORY CARDS
+   ============================================================ */
+
+.ev-category-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(8,minmax(0,1fr));
+
+    gap:
+        12px;
+}
+
+.ev-category {
+
+    min-height:
+        125px;
+
+    padding:
+        18px 12px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    border-radius:
+        20px;
+
+    background:
+        rgba(255,255,255,.82);
+
+    border:
+        1px solid
+        rgba(109,74,255,.09);
+
+    box-shadow:
+        0 10px 30px
+        rgba(70,50,150,.05);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border .25s ease;
+}
+
+.ev-category:hover {
+
+    transform:
+        translateY(-7px);
+
+    border-color:
+        rgba(109,74,255,.22);
+
+    box-shadow:
+        0 20px 45px
+        rgba(70,50,150,.12);
+}
+
+.ev-category-icon {
+
+    width:
+        49px;
+
+    height:
+        49px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    margin-bottom:
+        12px;
+
+    border-radius:
+        15px;
+
+    background:
+        var(--ev-gradient);
+
+    color:
+        white;
+
+    font-size:
+        21px;
+
+    box-shadow:
+        0 8px 20px
+        rgba(109,74,255,.14);
+
+    transition:
+        .25s ease;
+}
+
+.ev-category:hover
+.ev-category-icon {
+
+    transform:
+        translateY(-2px)
+        scale(1.05);
+
+    box-shadow:
+        var(--ev-glow);
+}
+
+.ev-category-name {
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+}
+
+
+/* ============================================================
+   EVENT CARDS
+   ============================================================ */
+
+.ev-event-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:
+        20px;
+}
+
+.ev-event-card {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    background:
+        white;
+
+    border:
+        1px solid
+        rgba(109,74,255,.08);
+
+    border-radius:
+        23px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(70,50,150,.07);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease,
+        border .3s ease;
+}
+
+.ev-event-card:hover {
+
+    transform:
+        translateY(-8px);
+
+    border-color:
+        rgba(109,74,255,.18);
+
+    box-shadow:
+        0 25px 60px
+        rgba(70,50,150,.14);
+}
+
+.ev-event-image {
+
+    position:
+        relative;
+
+    height:
+        190px;
+
+    overflow:
+        hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dcd5ff,
+            #f7dff0
+        );
+}
+
+.ev-event-image img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+    transition:
+        transform .5s ease;
+}
+
+.ev-event-card:hover
+.ev-event-image img {
+
+    transform:
+        scale(1.06);
+}
+
+.ev-event-image-placeholder {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    background:
+        radial-gradient(
+            circle at 25% 25%,
+            rgba(255,255,255,.8),
+            transparent 25%
+        ),
+
+        linear-gradient(
+            135deg,
+            #dcd5ff,
+            #f9d8ec
+        );
+
+    color:
+        var(--ev-violet);
+
+    font-size:
+        40px;
+}
+
+.ev-event-badge {
+
+    position:
+        absolute;
+
+    top:
+        12px;
+
+    left:
+        12px;
+
+    padding:
+        7px 10px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255,255,255,.90);
+
+    color:
+        var(--ev-violet);
+
+    font-size:
+        9px;
+
+    font-weight:
+        900;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .08em;
+
+    backdrop-filter:
+        blur(10px);
+}
+
+.ev-event-favorite {
+
+    position:
+        absolute;
+
+    top:
+        11px;
+
+    right:
+        11px;
+
+    width:
+        37px;
+
+    height:
+        37px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border:
+        0;
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(255,255,255,.9);
+
+    color:
+        #55516a;
+
+    cursor:
+        pointer;
+
+    transition:
+        .2s ease;
+}
+
+.ev-event-favorite:hover {
+
+    color:
+        var(--ev-pink);
+
+    transform:
+        scale(1.08);
+}
+
+.ev-event-body {
+
+    padding:
+        19px;
+}
+
+.ev-event-date {
+
+    color:
+        var(--ev-violet);
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .08em;
+}
+
+.ev-event-title {
+
+    margin:
+        8px 0 9px;
+
+    font-size:
+        17px;
+
+    line-height:
+        1.25;
+
+    font-weight:
+        900;
+
+    display:
+        -webkit-box;
+
+    -webkit-line-clamp:
+        2;
+
+    -webkit-box-orient:
+        vertical;
+
+    overflow:
+        hidden;
+}
+
+.ev-event-location {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        6px;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        11px;
+}
+
+.ev-event-bottom {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    margin-top:
+        18px;
+}
+
+.ev-event-price {
+
+    font-size:
+        15px;
+
+    font-weight:
+        900;
+}
+
+.ev-event-link {
+
+    width:
+        36px;
+
+    height:
+        36px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        11px;
+
+    color:
+        white;
+
+    background:
+        var(--ev-gradient);
+
+    text-decoration:
+        none;
+
+    box-shadow:
+        0 7px 18px
+        rgba(109,74,255,.20);
+}
+
+
+/* ============================================================
+   CONNECT SECTION
+   ============================================================ */
+
+.ev-connect-section {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    padding:
+        65px;
+
+    border-radius:
+        35px;
+
+    background:
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(236,72,153,.18),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 20% 90%,
+            rgba(56,189,248,.12),
+            transparent 25%
+        ),
+
+        linear-gradient(
+            135deg,
+            #ddd6fa,
+            #f7e9f4
+        );
+
+    border:
+        1px solid
+        rgba(109,74,255,.09);
+
+    box-shadow:
+        var(--ev-shadow);
+}
+
+.ev-connect-grid {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        60px;
+
+    align-items:
+        center;
+}
+
+.ev-connect-copy h2 {
+
+    margin:
+        10px 0 16px;
+
+    font-size:
+        clamp(32px,4vw,50px);
+
+    letter-spacing:
+        -.045em;
+
+    font-weight:
+        900;
+}
+
+.ev-connect-copy p {
+
+    max-width:
+        510px;
+
+    color:
+        var(--ev-text-soft);
+
+    line-height:
+        1.75;
+}
+
+.ev-connect-features {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:
+        12px;
+
+    margin-top:
+        28px;
+}
+
+.ev-connect-feature {
+
+    padding:
+        15px;
+
+    background:
+        rgba(255,255,255,.70);
+
+    border:
+        1px solid
+        rgba(255,255,255,.9);
+
+    border-radius:
+        17px;
+}
+
+.ev-connect-feature-icon {
+
+    color:
+        var(--ev-violet);
+
+    font-size:
+        18px;
+
+    margin-bottom:
+        8px;
+}
+
+.ev-connect-feature strong {
+
+    display:
+        block;
+
+    font-size:
+        12px;
+}
+
+.ev-connect-feature span {
+
+    display:
+        block;
+
+    margin-top:
+        4px;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        10px;
+}
+
+
+/* ============================================================
+   PEOPLE
+   ============================================================ */
+
+.ev-people-stack {
+
+    position:
+        relative;
+
+    min-height:
+        350px;
+}
+
+.ev-person-card {
+
+    position:
+        absolute;
+
+    width:
+        250px;
+
+    padding:
+        17px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    background:
+        rgba(255,255,255,.88);
+
+    border:
+        1px solid
+        rgba(255,255,255,.95);
+
+    border-radius:
+        20px;
+
+    box-shadow:
+        0 25px 60px
+        rgba(70,50,150,.12);
+
+    backdrop-filter:
+        blur(18px);
+}
+
+.ev-person-card:nth-child(1) {
+
+    top:
+        10px;
+
+    left:
+        10px;
+
+    transform:
+        rotate(-4deg);
+}
+
+.ev-person-card:nth-child(2) {
+
+    top:
+        110px;
+
+    right:
+        5px;
+
+    transform:
+        rotate(5deg);
+}
+
+.ev-person-card:nth-child(3) {
+
+    bottom:
+        15px;
+
+    left:
+        70px;
+
+    transform:
+        rotate(-2deg);
+}
+
+.ev-person-avatar {
+
+    width:
+        48px;
+
+    height:
+        48px;
+
+    flex-shrink:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        16px;
+
+    background:
+        var(--ev-gradient);
+
+    color:
+        white;
+
+    font-weight:
+        900;
+}
+
+.ev-person-info strong {
+
+    display:
+        block;
+
+    font-size:
+        13px;
+}
+
+.ev-person-info span {
+
+    display:
+        block;
+
+    margin-top:
+        4px;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        10px;
+}
+
+.ev-match {
+
+    margin-left:
+        auto;
+
+    padding:
+        5px 8px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(109,74,255,.08);
+
+    color:
+        var(--ev-violet);
+
+    font-size:
+        9px;
+
+    font-weight:
+        900;
+}
+
+
+/* ============================================================
+   EXPERIENCE FLOW
+   ============================================================ */
+
+.ev-flow {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(6,1fr);
+
+    gap:
+        10px;
+}
+
+.ev-flow-item {
+
+    position:
+        relative;
+
+    padding:
+        22px 12px;
+
+    text-align:
+        center;
+
+    background:
+        rgba(255,255,255,.84);
+
+    border:
+        1px solid
+        rgba(109,74,255,.08);
+
+    border-radius:
+        19px;
+
+    box-shadow:
+        0 10px 28px
+        rgba(70,50,150,.05);
+}
+
+.ev-flow-number {
+
+    width:
+        35px;
+
+    height:
+        35px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    margin:
+        0 auto 12px;
+
+    border-radius:
+        12px;
+
+    color:
+        white;
+
+    background:
+        var(--ev-gradient);
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+}
+
+.ev-flow-item strong {
+
+    display:
+        block;
+
+    font-size:
+        12px;
+}
+
+.ev-flow-item span {
+
+    display:
+        block;
+
+    margin-top:
+        5px;
+
+    color:
+        var(--ev-text-soft);
+
+    font-size:
+        9px;
+}
+
+
+/* ============================================================
+   REWARD
+   ============================================================ */
+
+.ev-reward-card {
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    padding:
+        50px;
+
+    border-radius:
+        30px;
+
+    color:
+        white;
+
+    background:
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(236,72,153,.35),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(56,189,248,.20),
+            transparent 25%
+        ),
+
+        linear-gradient(
+            135deg,
+            #4f36c9,
+            #7c3aed 55%,
+            #b83280
+        );
+
+    box-shadow:
+        0 30px 70px
+        rgba(85,55,190,.25);
+}
+
+.ev-reward-grid {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr auto;
+
+    align-items:
+        center;
+
+    gap:
+        30px;
+}
+
+.ev-reward-card h2 {
+
+    margin:
+        8px 0 12px;
+
+    font-size:
+        40px;
+
+    letter-spacing:
+        -.04em;
+}
+
+.ev-reward-card p {
+
+    max-width:
+        580px;
+
+    margin:
+        0;
+
+    color:
+        rgba(255,255,255,.76);
+
+    line-height:
+        1.7;
+}
+
+.ev-reward-pills {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    flex-wrap:
+        wrap;
+
+    margin-top:
+        25px;
+}
+
+.ev-reward-pill {
+
+    padding:
+        8px 12px;
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(255,255,255,.12);
+
+    border:
+        1px solid
+        rgba(255,255,255,.15);
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+}
+
+
+/* ============================================================
+   FINAL CTA
+   ============================================================ */
+
+.ev-final-cta {
+
+    padding:
+        95px 20px;
+
+    text-align:
+        center;
+}
+
+.ev-final-cta h2 {
+
+    max-width:
+        760px;
+
+    margin:
+        auto;
+
+    font-size:
+        clamp(38px,5vw,62px);
+
+    line-height:
+        1;
+
+    letter-spacing:
+        -.055em;
+
+    font-weight:
+        900;
+}
+
+.ev-final-cta p {
+
+    max-width:
+        600px;
+
+    margin:
+        20px auto 30px;
+
+    color:
+        var(--ev-text-soft);
+
+    line-height:
+        1.7;
+}
+
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+
+.ev-reveal {
+
+    opacity:
+        0;
+
+    transform:
+        translateY(25px);
+
+    transition:
+        opacity .7s ease,
+        transform .7s ease;
+}
+
+.ev-reveal.ev-visible {
+
+    opacity:
+        1;
+
+    transform:
+        translateY(0);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width:1050px) {
+
+    .ev-category-grid {
+        grid-template-columns:
+            repeat(4,1fr);
+    }
+
+    .ev-event-grid {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .ev-search-card {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .ev-search-btn {
+        min-height:
+            55px;
+    }
+
+    .ev-flow {
+        grid-template-columns:
+            repeat(3,1fr);
+    }
+
+    .ev-music-keyboard {
+        display:
+            none;
+    }
+}
+
+
+@media (max-width:820px) {
+
+    .ev-hero {
+        padding-top:
+            55px;
+    }
+
+    .ev-hero-grid {
+        grid-template-columns:
+            1fr;
+
+        text-align:
+            center;
+    }
+
+    .ev-hero-description {
+        margin-left:
+            auto;
+
+        margin-right:
+            auto;
+    }
+
+    .ev-hero-actions {
+        justify-content:
+            center;
+    }
+
+    .ev-hero-stats {
+        justify-content:
+            center;
+    }
+
+    .ev-visual {
+        min-height:
+            460px;
+    }
+
+    .ev-connect-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .ev-connect-copy {
+        text-align:
+            center;
+    }
+
+    .ev-connect-copy p {
+        margin-left:
+            auto;
+
+        margin-right:
+            auto;
+    }
+
+    .ev-connect-features {
+        text-align:
+            left;
+    }
+
+    .ev-reward-grid {
+        grid-template-columns:
+            1fr;
+
+        text-align:
+            center;
+    }
+
+    .ev-reward-pills {
+        justify-content:
+            center;
+    }
+
+    .ev-music-headphones {
+        right:
+            0;
+    }
+
+    .ev-music-guitar {
+        right:
+            5%;
+    }
+}
+
+
+@media (max-width:600px) {
+
+    .eventify-container {
+        width:
+            min(100% - 26px,1180px);
+    }
+
+    .ev-hero {
+        min-height:
+            auto;
+
+        padding:
+            45px 0 70px;
+    }
+
+    .ev-hero-title {
+        font-size:
+            46px;
+    }
+
+    .ev-hero-description {
+        font-size:
+            15px;
+    }
+
+    .ev-hero-stats {
+        gap:
+            18px;
+    }
+
+    .ev-stat-number {
+        font-size:
+            17px;
+    }
+
+    .ev-visual {
+        min-height:
+            390px;
+    }
+
+    .ev-ticket {
+        width:
+            92%;
+
+        min-height:
+            225px;
+
+        padding:
+            20px;
+    }
+
+    .ev-ticket-title {
+        font-size:
+            23px;
+    }
+
+    .ev-mini-one {
+        left:
+            -5px;
+
+        top:
+            45px;
+    }
+
+    .ev-mini-two {
+        right:
+            -5px;
+
+        bottom:
+            35px;
+    }
+
+    .ev-search-card {
+        grid-template-columns:
+            1fr;
+    }
+
+    .ev-search-wrap {
+        margin-top:
+            -10px;
+    }
+
+    .ev-section {
+        padding:
+            65px 0;
+    }
+
+    .ev-section-heading {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+    .ev-category-grid {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .ev-event-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .ev-connect-section {
+        padding:
+            30px 20px;
+    }
+
+    .ev-connect-features {
+        grid-template-columns:
+            1fr;
+    }
+
+    .ev-people-stack {
+        transform:
+            scale(.88);
+
+        transform-origin:
+            center;
+
+        margin:
+            -20px;
+    }
+
+    .ev-flow {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .ev-reward-card {
+        padding:
+            35px 25px;
+    }
+
+    .ev-reward-card h2 {
+        font-size:
+            32px;
+    }
+
+    .ev-final-cta {
+        padding:
+            65px 10px;
+    }
+
+    /* Keep mobile music elements subtle */
+
+    .ev-music-headphones {
+        width:
+            45px;
+
+        height:
+            45px;
+
+        top:
+            120px;
+    }
+
+    .ev-music-mic {
+        width:
+            42px;
+
+        height:
+            42px;
+
+        left:
+            0;
+    }
+
+    .ev-music-speaker,
+    .ev-music-guitar {
+        display:
+            none;
+    }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion:reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            .01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        scroll-behavior:
+            auto !important;
+
+        transition-duration:
+            .01ms !important;
+    }
+}
+
+</style>
+
+
+<div class="eventify-page">
+
+    <!-- ========================================================
+         ATMOSPHERIC BACKGROUND
+         ======================================================== -->
+
+    <div class="ev-orb ev-orb-1"></div>
+    <div class="ev-orb ev-orb-2"></div>
+    <div class="ev-orb ev-orb-3"></div>
+
+
+    <!-- CRYSTAL BUBBLES -->
+
+    <div class="ev-bubble ev-bubble-1"></div>
+    <div class="ev-bubble ev-bubble-2"></div>
+    <div class="ev-bubble ev-bubble-3"></div>
+    <div class="ev-bubble ev-bubble-4"></div>
+
+
+    <!-- ========================================================
+         MUSIC ATMOSPHERE
+         ======================================================== -->
+
+    <div class="ev-music-element ev-music-headphones">
+        <span class="ev-music-icon">🎧</span>
     </div>
 
-    <!-- SEARCH -->
-    <div class="glass p-4 p-md-5 mt-5" data-aos="fade-up">
-      <h5 class="mb-1">What are you looking for?</h5>
-      <p class="text-dim mb-4" style="font-size:.9rem;">Search across concerts, conferences, workshops and more</p>
-      <form action="{{ url_for('events') }}" method="get" class="row g-3">
-        <div class="col-lg-4">
-          <input type="text" name="q" class="form-control form-control-glass" placeholder="Search events...">
-        </div>
-        <div class="col-lg-3">
-          <input type="text" name="location" class="form-control form-control-glass" placeholder="Location">
-        </div>
-        <div class="col-lg-3">
-          <select name="category" class="form-select form-select-glass">
-            <option value="">Any Category</option>
-            {% for c in categories %}
-            <option value="{{ c.name }}">{{ c.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-lg-2">
-          <button type="submit" class="btn btn-glow w-100"><i class="fa-solid fa-magnifying-glass me-1"></i> Search</button>
-        </div>
-      </form>
+    <div class="ev-music-element ev-music-mic">
+        <span class="ev-music-icon">🎤</span>
     </div>
-  </div>
-</section>
 
-<!-- ULLAS FEATURED EVENT -->
-{% if ullas %}
-<section class="section pb-0">
-  <div class="container">
-    <div class="glass-card ullas-feature p-4 p-md-5" data-aos="zoom-in">
-      <div class="ullas-shine"></div>
-      <div class="row align-items-center g-4 position-relative">
-        <div class="col-lg-7">
-          <div class="section-label">🌟 Flagship Event</div>
-          <h2 class="section-title mb-3">{{ ullas.title }}</h2>
-          <p class="text-dim mb-2"><i class="fa-solid fa-location-dot me-2"></i>{{ ullas.venue }}, {{ ullas.location }}</p>
-          <p class="text-dim mb-3"><i class="fa-regular fa-calendar me-2"></i>{{ ullas.date.strftime('%d %b %Y') }} · {{ ullas.time }}</p>
-          <p class="text-dim mb-4">{{ ullas.description }}</p>
-          <a href="{{ url_for('event_detail', event_id=ullas.id) }}" class="btn btn-glow btn-lg">Get VVIP Access <i class="fa-solid fa-arrow-right ms-1"></i></a>
-        </div>
-        <div class="col-lg-5">
-          <img src="{{ ullas.image }}" class="rounded-4 w-100" style="height:280px;object-fit:cover;" alt="ULLAS">
-        </div>
-      </div>
+    <div class="ev-music-element ev-music-note">
+        <span class="ev-music-icon">♪</span>
     </div>
-  </div>
-</section>
-{% endif %}
 
-<!-- CATEGORIES -->
-<section class="section" id="categories">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <div class="section-label">Browse by interest</div>
-      <h2 class="section-title">Event Categories</h2>
+    <div class="ev-music-element ev-music-speaker">
+        <span class="ev-music-icon">🔊</span>
     </div>
-    <div class="row g-3">
-      {% for c in categories %}
-      <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 40 }}">
-        <a href="{{ url_for('events', category=c.name) }}" class="glass-card cat-card d-block text-decoration-none">
-          <div class="icon-wrap"><i class="fa-solid {{ c.icon }}"></i></div>
-          <h6 class="mb-1">{{ c.name }}</h6>
-          <span class="text-faint" style="font-size:.78rem;">{{ c.events|length }} events</span>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
 
-<!-- FEATURED EVENTS -->
-<section class="section">
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-end mb-5 flex-wrap gap-3" data-aos="fade-up">
-      <div>
-        <div class="section-label">Handpicked for you</div>
-        <h2 class="section-title">Featured Events</h2>
-      </div>
-      <a href="{{ url_for('events') }}" class="btn btn-outline-glow">View All Events</a>
+    <div class="ev-music-element ev-music-guitar">
+        <span class="ev-music-icon">🎸</span>
     </div>
-    <div class="row g-4">
-      {% for e in featured %}
-      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
-        {% include "_event_card.html" %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
 
-<!-- TRENDING -->
-{% if trending %}
-<section class="section pt-0">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <div class="section-label">🔥 Hot right now</div>
-      <h2 class="section-title">Trending Events</h2>
+    <div class="ev-music-element ev-music-keyboard">
+        <span class="ev-music-icon">🎹</span>
     </div>
-    <div class="row g-4">
-      {% for e in trending %}
-      <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
-        {% include "_event_card.html" %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
 
-<!-- WHY EVENTIFY -->
-<section class="section" id="about">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <div class="section-label">Why choose us</div>
-      <h2 class="section-title">Why Eventify</h2>
-    </div>
-    <div class="row g-4">
-      {% set features = [
-        ("fa-magnifying-glass", "Easy Discovery", "Find events that match your interests in seconds with smart search and filters."),
-        ("fa-ticket", "Simple Booking", "Book tickets in a few clean steps — no clutter, no confusion."),
-        ("fa-shield-halved", "Secure Accounts", "Your data and bookings are protected with modern authentication."),
-        ("fa-qrcode", "Digital Tickets", "Get a QR-coded digital ticket instantly, ready to scan at the venue."),
-        ("fa-layer-group", "Multiple Categories", "From concerts to conferences — something for every interest."),
-        ("fa-gauge-high", "Easy Management", "A powerful admin panel keeps events, users and bookings organized."),
-      ] %}
-      {% for icon, title, desc in features %}
-      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
-        <div class="glass-card feature-card h-100">
-          <div class="icon-wrap"><i class="fa-solid {{ icon }}"></i></div>
-          <h5 class="mb-2">{{ title }}</h5>
-          <p class="text-dim mb-0">{{ desc }}</p>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
 
-<!-- STATS -->
-<section class="section">
-  <div class="container">
-    <div class="glass p-5" data-aos="fade-up">
-      <div class="row text-center g-4">
-        <div class="col-6 col-md-3">
-          <div class="stat-number" data-count="{{ stats.users }}">0</div>
-          <p class="text-dim mb-0">Happy Users</p>
-        </div>
-        <div class="col-6 col-md-3">
-          <div class="stat-number" data-count="{{ stats.events }}">0</div>
-          <p class="text-dim mb-0">Events</p>
-        </div>
-        <div class="col-6 col-md-3">
-          <div class="stat-number" data-count="{{ stats.tickets }}">0</div>
-          <p class="text-dim mb-0">Tickets Booked</p>
-        </div>
-        <div class="col-6 col-md-3">
-          <div class="stat-number" data-count="{{ stats.cities }}">0</div>
-          <p class="text-dim mb-0">Cities</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    <!-- ========================================================
+         HERO
+         ======================================================== -->
 
-<!-- UPCOMING -->
-{% if upcoming %}
-<section class="section pt-0">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <div class="section-label">Mark your calendar</div>
-      <h2 class="section-title">Upcoming Events</h2>
-    </div>
-    <div class="row g-4">
-      {% for e in upcoming %}
-      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
-        {% include "_event_card.html" %}
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
+    <section class="ev-hero">
 
-<!-- CITY DISCOVERY -->
-{% if cities %}
-<section class="section pt-0">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <div class="section-label">Across India</div>
-      <h2 class="section-title">Discover by City</h2>
-    </div>
-    <div class="row g-3">
-      {% for city in cities %}
-      <div class="col-6 col-md-4 col-lg-2" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 30 }}">
-        <a href="{{ url_for('events', location=city) }}" class="city-chip">
-          <i class="fa-solid fa-location-dot text-info"></i><span>{{ city }}</span>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
+        <div class="eventify-container">
 
-<!-- TESTIMONIALS -->
-<section class="section">
-  <div class="container">
-    <div class="text-center mb-5" data-aos="fade-up">
-      <div class="section-label">Loved by attendees</div>
-      <h2 class="section-title">What People Say</h2>
-    </div>
-    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        {% set testimonials = [
-          ("Riya Kapoor", "Delhi", 5, "Booking my conference pass took under two minutes and the digital ticket with QR code made entry effortless."),
-          ("Aman Verma", "Mumbai", 5, "The event discovery experience is genuinely fun — I found three workshops I'd never have known about otherwise."),
-          ("Sneha Iyer", "Bengaluru", 4, "Clean design, fast checkout, and I love that I can track all my bookings in one dashboard."),
-        ] %}
-        {% for name, city, rating, quote in testimonials %}
-        <div class="carousel-item {% if loop.first %}active{% endif %}">
-          <div class="glass-card p-5 mx-auto text-center" style="max-width:640px;">
-            <div class="mb-3">
-              {% for i in range(rating) %}<i class="fa-solid fa-star text-warning"></i>{% endfor %}
-              {% for i in range(5 - rating) %}<i class="fa-regular fa-star text-warning"></i>{% endfor %}
+            <div class="ev-hero-grid">
+
+                <!-- HERO TEXT -->
+
+                <div class="ev-hero-content ev-reveal">
+
+                    <div class="ev-eyebrow">
+
+                        <span class="ev-pulse-dot"></span>
+
+                        DISCOVER • CONNECT • EXPERIENCE
+
+                    </div>
+
+
+                    <h1 class="ev-hero-title">
+
+                        Find experiences
+
+                        <br>
+
+                        <span class="ev-gradient-text">
+                            worth remembering.
+                        </span>
+
+                    </h1>
+
+
+                    <p class="ev-hero-description">
+
+                        Discover exciting events, connect with people,
+                        plan unforgettable experiences and book your next
+                        adventure — all in one place.
+
+                    </p>
+
+
+                    <div class="ev-hero-actions">
+
+                        <a
+                            href="#events"
+                            class="ev-btn-primary"
+                        >
+                            Explore Events
+                            <span>→</span>
+                        </a>
+
+
+                        <a
+                            href="#categories"
+                            class="ev-btn-secondary"
+                        >
+                            Browse Categories
+                        </a>
+
+                    </div>
+
+
+                    <div class="ev-hero-stats">
+
+                        <div class="ev-stat">
+
+                            <span class="ev-stat-number">
+                                500+
+                            </span>
+
+                            <span class="ev-stat-label">
+                                Experiences
+                            </span>
+
+                        </div>
+
+
+                        <div class="ev-stat">
+
+                            <span class="ev-stat-number">
+                                50K+
+                            </span>
+
+                            <span class="ev-stat-label">
+                                Event Lovers
+                            </span>
+
+                        </div>
+
+
+                        <div class="ev-stat">
+
+                            <span class="ev-stat-number">
+                                100+
+                            </span>
+
+                            <span class="ev-stat-label">
+                                Organizers
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==================================================
+                     HERO VISUAL
+                     ================================================== -->
+
+                <div class="ev-visual ev-reveal">
+
+                    <div class="ev-visual-glow"></div>
+
+                    <div class="ev-music-pulse"></div>
+
+
+                    <!-- FLOATING EXPERIENCE CARD -->
+
+                    <div class="ev-mini-card ev-mini-one">
+
+                        <div class="ev-mini-icon">
+                            ✦
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                New experience found
+                            </strong>
+
+                            <span>
+                                Music • Tonight
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MAIN EVENT TICKET -->
+
+                    <div class="ev-ticket">
+
+                        <div class="ev-ticket-top">
+
+                            <div class="ev-ticket-brand">
+
+                                <div class="ev-ticket-logo">
+                                    E
+                                </div>
+
+                                EVENTIFY
+
+                            </div>
+
+
+                            <div class="ev-ticket-live">
+                                EXPERIENCE
+                            </div>
+
+                        </div>
+
+
+                        <div class="ev-ticket-main">
+
+                            <div class="ev-ticket-label">
+                                Your next experience
+                            </div>
+
+
+                            <div class="ev-ticket-title">
+                                Live Music Night
+                            </div>
+
+
+                            <div class="ev-ticket-meta">
+
+                                <span>
+                                    📅 24 AUG 2026
+                                </span>
+
+                                <span>
+                                    📍 Lucknow
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ev-ticket-bottom">
+
+                            <div class="ev-ticket-id">
+                                EVENTIFY • EXPERIENCE PASS
+                            </div>
+
+                            <div class="ev-ticket-qr"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FLOATING PEOPLE CARD -->
+
+                    <div class="ev-mini-card ev-mini-two">
+
+                        <div class="ev-mini-icon">
+                            ♡
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                2,840 people
+                            </strong>
+
+                            <span>
+                                are discovering events
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
-            <p class="fs-5 mb-4">"{{ quote }}"</p>
-            <div class="d-flex align-items-center justify-content-center gap-3">
-              <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:46px;height:46px;background:var(--grad-primary);font-weight:700;">{{ name[0] }}</div>
-              <div class="text-start">
-                <h6 class="mb-0">{{ name }}</h6>
-                <span class="text-faint" style="font-size:.8rem;">{{ city }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-        <span class="btn btn-ghost-sm"><i class="fa-solid fa-chevron-left"></i></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-        <span class="btn btn-ghost-sm"><i class="fa-solid fa-chevron-right"></i></span>
-      </button>
-    </div>
-  </div>
-</section>
 
-<!-- NEWSLETTER -->
-<section class="section" id="contact">
-  <div class="container">
-    <div class="glass p-5 text-center position-relative overflow-hidden" data-aos="zoom-in">
-      <h2 class="section-title mb-2">Never Miss an <span class="gradient-text">Event</span></h2>
-      <p class="text-dim mb-3">Get curated event picks and early-bird ticket alerts in your inbox.</p>
-      <p class="text-dim mb-4"><i class="fa-solid fa-phone me-2 text-info"></i>Reach us at <strong>+91 63060 73485</strong></p>
-      <form class="d-flex gap-2 justify-content-center flex-wrap" onsubmit="event.preventDefault(); this.querySelector('button').innerHTML='<i class=\'fa-solid fa-check\'></i> Subscribed'; this.querySelector('button').classList.add('btn-glow');">
-        <input type="email" required class="form-control form-control-glass" style="max-width:320px;" placeholder="Your Email">
-        <button type="submit" class="btn btn-glow">Subscribe</button>
-      </form>
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         SEARCH
+         ======================================================== -->
+
+    <div class="eventify-container ev-search-wrap">
+
+        <div class="ev-search-card">
+
+            <div class="ev-search-field">
+
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    placeholder="Search events, artists, experiences..."
+                >
+
+            </div>
+
+
+            <div class="ev-search-field">
+
+                <span>⌖</span>
+
+                <span>
+                    Lucknow
+                </span>
+
+            </div>
+
+
+            <div class="ev-search-field">
+
+                <span>◷</span>
+
+                <span>
+                    Any date
+                </span>
+
+            </div>
+
+
+            <button
+                class="ev-search-btn"
+                type="button"
+            >
+                Search Events
+            </button>
+
+        </div>
+
     </div>
-  </div>
-</section>
+
+
+    <!-- ========================================================
+         CATEGORIES
+         ======================================================== -->
+
+    <section
+        class="ev-section"
+        id="categories"
+    >
+
+        <div class="eventify-container">
+
+            <div class="ev-section-heading ev-reveal">
+
+                <div>
+
+                    <div class="ev-section-kicker">
+                        Explore
+                    </div>
+
+                    <h2 class="ev-section-title">
+                        Find your kind of experience.
+                    </h2>
+
+                </div>
+
+
+                <p class="ev-section-description">
+
+                    From music and comedy to technology, sports and
+                    unforgettable experiences, discover something that
+                    matches your vibe.
+
+                </p>
+
+            </div>
+
+
+            <div class="ev-category-grid">
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ♫
+                    </div>
+
+                    <div class="ev-category-name">
+                        Music
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ★
+                    </div>
+
+                    <div class="ev-category-name">
+                        Festivals
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ◉
+                    </div>
+
+                    <div class="ev-category-name">
+                        Sports
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ◆
+                    </div>
+
+                    <div class="ev-category-name">
+                        Art
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ⌁
+                    </div>
+
+                    <div class="ev-category-name">
+                        Technology
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ☺
+                    </div>
+
+                    <div class="ev-category-name">
+                        Comedy
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ✦
+                    </div>
+
+                    <div class="ev-category-name">
+                        Education
+                    </div>
+
+                </div>
+
+
+                <div class="ev-category ev-reveal">
+
+                    <div class="ev-category-icon">
+                        ♡
+                    </div>
+
+                    <div class="ev-category-name">
+                        Experiences
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         EVENTS
+         ======================================================== -->
+
+    <section
+        class="ev-section"
+        id="events"
+    >
+
+        <div class="eventify-container">
+
+            <div class="ev-section-heading ev-reveal">
+
+                <div>
+
+                    <div class="ev-section-kicker">
+                        Discover
+                    </div>
+
+                    <h2 class="ev-section-title">
+                        Events people are loving.
+                    </h2>
+
+                </div>
+
+
+                <a
+                    href="/events"
+                    class="ev-see-all"
+                >
+                    View all events →
+                </a>
+
+            </div>
+
+
+            <div class="ev-event-grid">
+
+                {% if events %}
+
+                    {% for event in events[:8] %}
+
+                    <article
+                        class="ev-event-card ev-reveal"
+                    >
+
+                        <div class="ev-event-image">
+
+                            {% if event.image %}
+
+                                <img
+                                    src="{{ event.image }}"
+                                    alt="{{ event.title }}"
+                                    loading="lazy"
+                                >
+
+                            {% else %}
+
+                                <div class="ev-event-image-placeholder">
+                                    ✦
+                                </div>
+
+                            {% endif %}
+
+
+                            <div class="ev-event-badge">
+                                Event
+                            </div>
+
+
+                            <button
+                                class="ev-event-favorite"
+                                type="button"
+                                aria-label="Save event"
+                            >
+                                ♡
+                            </button>
+
+                        </div>
+
+
+                        <div class="ev-event-body">
+
+                            <div class="ev-event-date">
+
+                                {% if event.date %}
+                                    {{ event.date }}
+                                {% else %}
+                                    Upcoming
+                                {% endif %}
+
+                            </div>
+
+
+                            <h3 class="ev-event-title">
+                                {{ event.title }}
+                            </h3>
+
+
+                            <div class="ev-event-location">
+
+                                <span>⌖</span>
+
+                                <span>
+
+                                    {% if event.location %}
+                                        {{ event.location }}
+
+                                    {% elif event.venue %}
+                                        {{ event.venue }}
+
+                                    {% else %}
+                                        Location available
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="ev-event-bottom">
+
+                                <div class="ev-event-price">
+
+                                    {% if event.ticket_price is defined %}
+
+                                        ₹{{ event.ticket_price }}
+
+                                    {% elif event.price is defined %}
+
+                                        ₹{{ event.price }}
+
+                                    {% else %}
+
+                                        Book now
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <a
+                                    href="{{ url_for('event_details', event_id=event.id) if event.id is defined else '/events' }}"
+                                    class="ev-event-link"
+                                >
+                                    →
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+
+                    {% for item in [
+                        ('Live Music Night','Music • Lucknow'),
+                        ('Creative Arts Festival','Art • Lucknow'),
+                        ('Future Tech Summit','Technology • Lucknow'),
+                        ('Comedy Experience','Comedy • Lucknow')
+                    ] %}
+
+                    <article
+                        class="ev-event-card ev-reveal"
+                    >
+
+                        <div class="ev-event-image">
+
+                            <div class="ev-event-image-placeholder">
+                                ✦
+                            </div>
+
+                            <div class="ev-event-badge">
+                                Featured
+                            </div>
+
+                        </div>
+
+
+                        <div class="ev-event-body">
+
+                            <div class="ev-event-date">
+                                Coming Soon
+                            </div>
+
+
+                            <h3 class="ev-event-title">
+                                {{ item[0] }}
+                            </h3>
+
+
+                            <div class="ev-event-location">
+                                ⌖ {{ item[1] }}
+                            </div>
+
+
+                            <div class="ev-event-bottom">
+
+                                <div class="ev-event-price">
+                                    Discover
+                                </div>
+
+                                <a
+                                    href="/events"
+                                    class="ev-event-link"
+                                >
+                                    →
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         EVENTIFY CONNECT
+         ======================================================== -->
+
+    <section class="ev-section">
+
+        <div class="eventify-container">
+
+            <div
+                class="ev-connect-section ev-reveal"
+            >
+
+                <div class="ev-connect-grid">
+
+
+                    <div class="ev-connect-copy">
+
+                        <div class="ev-section-kicker">
+                            Eventify Connect
+                        </div>
+
+
+                        <h2>
+
+                            Events are better
+
+                            <span class="ev-gradient-text">
+                                together.
+                            </span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Discover people who share your interests,
+                            follow organizers, join event groups,
+                            participate in polls and make your next
+                            experience more social.
+
+                        </p>
+
+
+                        <div class="ev-connect-features">
+
+
+                            <div class="ev-connect-feature">
+
+                                <div class="ev-connect-feature-icon">
+                                    ♡
+                                </div>
+
+                                <strong>
+                                    People You May Meet
+                                </strong>
+
+                                <span>
+                                    Discover people connected to your interests.
+                                </span>
+
+                            </div>
+
+
+                            <div class="ev-connect-feature">
+
+                                <div class="ev-connect-feature-icon">
+                                    +
+                                </div>
+
+                                <strong>
+                                    Follow & Connect
+                                </strong>
+
+                                <span>
+                                    Stay connected with people and organizers.
+                                </span>
+
+                            </div>
+
+
+                            <div class="ev-connect-feature">
+
+                                <div class="ev-connect-feature-icon">
+                                    ◇
+                                </div>
+
+                                <strong>
+                                    Event Groups
+                                </strong>
+
+                                <span>
+                                    Plan and experience events together.
+                                </span>
+
+                            </div>
+
+
+                            <div class="ev-connect-feature">
+
+                                <div class="ev-connect-feature-icon">
+                                    ?
+                                </div>
+
+                                <strong>
+                                    Polls & Say Hi
+                                </strong>
+
+                                <span>
+                                    Start conversations before the event.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ev-people-stack">
+
+                        <div class="ev-person-card">
+
+                            <div class="ev-person-avatar">
+                                A
+                            </div>
+
+                            <div class="ev-person-info">
+
+                                <strong>
+                                    Event Explorer
+                                </strong>
+
+                                <span>
+                                    Music • Festivals
+                                </span>
+
+                            </div>
+
+                            <div class="ev-match">
+                                94%
+                            </div>
+
+                        </div>
+
+
+                        <div class="ev-person-card">
+
+                            <div class="ev-person-avatar">
+                                R
+                            </div>
+
+                            <div class="ev-person-info">
+
+                                <strong>
+                                    Experience Lover
+                                </strong>
+
+                                <span>
+                                    Art • Events
+                                </span>
+
+                            </div>
+
+                            <div class="ev-match">
+                                89%
+                            </div>
+
+                        </div>
+
+
+                        <div class="ev-person-card">
+
+                            <div class="ev-person-avatar">
+                                S
+                            </div>
+
+                            <div class="ev-person-info">
+
+                                <strong>
+                                    Event Enthusiast
+                                </strong>
+
+                                <span>
+                                    Tech • Community
+                                </span>
+
+                            </div>
+
+                            <div class="ev-match">
+                                91%
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         EXPERIENCE FLOW
+         ======================================================== -->
+
+    <section class="ev-section">
+
+        <div class="eventify-container">
+
+            <div class="ev-section-heading ev-reveal">
+
+                <div>
+
+                    <div class="ev-section-kicker">
+                        The Eventify Experience
+                    </div>
+
+                    <h2 class="ev-section-title">
+                        From discovery to memory.
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="ev-flow">
+
+                <div class="ev-flow-item ev-reveal">
+
+                    <div class="ev-flow-number">
+                        01
+                    </div>
+
+                    <strong>
+                        Discover
+                    </strong>
+
+                    <span>
+                        Find experiences
+                    </span>
+
+                </div>
+
+
+                <div class="ev-flow-item ev-reveal">
+
+                    <div class="ev-flow-number">
+                        02
+                    </div>
+
+                    <strong>
+                        Connect
+                    </strong>
+
+                    <span>
+                        Meet your people
+                    </span>
+
+                </div>
+
+
+                <div class="ev-flow-item ev-reveal">
+
+                    <div class="ev-flow-number">
+                        03
+                    </div>
+
+                    <strong>
+                        Plan
+                    </strong>
+
+                    <span>
+                        Make it happen
+                    </span>
+
+                </div>
+
+
+                <div class="ev-flow-item ev-reveal">
+
+                    <div class="ev-flow-number">
+                        04
+                    </div>
+
+                    <strong>
+                        Book
+                    </strong>
+
+                    <span>
+                        Secure your ticket
+                    </span>
+
+                </div>
+
+
+                <div class="ev-flow-item ev-reveal">
+
+                    <div class="ev-flow-number">
+                        05
+                    </div>
+
+                    <strong>
+                        Attend
+                    </strong>
+
+                    <span>
+                        Live the moment
+                    </span>
+
+                </div>
+
+
+                <div class="ev-flow-item ev-reveal">
+
+                    <div class="ev-flow-number">
+                        06
+                    </div>
+
+                    <strong>
+                        Remember
+                    </strong>
+
+                    <span>
+                        Keep the memory
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         REWARDS
+         ======================================================== -->
+
+    <section class="ev-section">
+
+        <div class="eventify-container">
+
+            <div class="ev-reward-card ev-reveal">
+
+                <div class="ev-reward-grid">
+
+                    <div>
+
+                        <div
+                            class="ev-section-kicker"
+                            style="color:rgba(255,255,255,.7);"
+                        >
+                            Eventify Rewards
+                        </div>
+
+
+                        <h2>
+
+                            Every experience
+                            can unlock something more.
+
+                        </h2>
+
+
+                        <p>
+
+                            Discover events, connect with people,
+                            participate in the Eventify community and
+                            build your journey through points, badges
+                            and achievements.
+
+                        </p>
+
+
+                        <div class="ev-reward-pills">
+
+                            <span class="ev-reward-pill">
+                                ✦ Points
+                            </span>
+
+                            <span class="ev-reward-pill">
+                                ◈ Badges
+                            </span>
+
+                            <span class="ev-reward-pill">
+                                ♡ Referrals
+                            </span>
+
+                            <span class="ev-reward-pill">
+                                ★ Achievements
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        style="
+                        font-size:100px;
+                        line-height:1;
+                        opacity:.9;
+                        "
+                    >
+                        ✦
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================
+         FINAL CTA
+         ======================================================== -->
+
+    <section class="ev-final-cta">
+
+        <div class="eventify-container ev-reveal">
+
+            <div class="ev-section-kicker">
+                Your next experience is waiting
+            </div>
+
+
+            <h2>
+
+                Don't just find an event.
+
+                <span class="ev-gradient-text">
+                    Find your moment.
+                </span>
+
+            </h2>
+
+
+            <p>
+
+                Explore experiences, connect with your people and
+                make memories worth keeping.
+
+            </p>
+
+
+            <a
+                href="#events"
+                class="ev-btn-primary"
+            >
+                Start Exploring →
+            </a>
+
+        </div>
+
+    </section>
+
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   EVENTIFY — SCROLL REVEAL
+   ============================================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const elements =
+            document.querySelectorAll(
+                ".ev-reveal"
+            );
+
+
+        if (
+            !(
+                "IntersectionObserver"
+                in window
+            )
+        ) {
+
+            elements.forEach(
+                function (element) {
+
+                    element.classList.add(
+                        "ev-visible"
+                    );
+
+                }
+            );
+
+            return;
+        }
+
+
+        const observer =
+            new IntersectionObserver(
+
+                function (entries) {
+
+                    entries.forEach(
+                        function (entry) {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    "ev-visible"
+                                );
+
+                                observer.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+
+                {
+                    threshold:
+                        0.12
+                }
+
+            );
+
+
+        elements.forEach(
+            function (element) {
+
+                observer.observe(
+                    element
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* ============================================================
+   FAVORITE BUTTON
+   ============================================================ */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
+                ".ev-event-favorite"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        event.preventDefault();
+
+
+        if (
+            button.dataset.saved ===
+            "true"
+        ) {
+
+            button.dataset.saved =
+                "false";
+
+            button.textContent =
+                "♡";
+
+        } else {
+
+            button.dataset.saved =
+                "true";
+
+            button.textContent =
+                "♥";
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   SMOOTH INTERNAL NAVIGATION
+   ============================================================ */
+
+document.querySelectorAll(
+    'a[href^="#"]'
+).forEach(
+    function (link) {
+
+        link.addEventListener(
+            "click",
+            function (event) {
+
+                const targetId =
+                    this.getAttribute(
+                        "href"
+                    );
+
+
+                if (
+                    !targetId ||
+                    targetId === "#"
+                ) {
+                    return;
+                }
+
+
+                const target =
+                    document.querySelector(
+                        targetId
+                    );
+
+
+                if (!target) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                target.scrollIntoView({
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+                });
+
+            }
+        );
+
+    }
+);
+
+</script>
 
 {% endblock %}

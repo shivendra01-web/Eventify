@@ -1,87 +1,275 @@
 {% extends "admin/admin_base.html" %}
+
 {% block title %}Manage Events — Admin{% endblock %}
+
 {% block admin_content %}
+
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3" data-aos="fade-up">
+
   <div>
     <h2 class="section-title">Manage Events</h2>
-    <p class="text-dim mb-0">{{ events|length }} event(s) on the platform</p>
+    <p class="text-dim mb-0">
+      {{ events|length }} event(s) on the platform
+    </p>
   </div>
-  <a href="{{ url_for('admin_event_new') }}" class="btn btn-glow"><i class="fa-solid fa-plus me-1"></i> Add Event</a>
+
+  <a href="{{ url_for('admin_event_new') }}" class="btn btn-glow">
+    <i class="fa-solid fa-plus me-1"></i>
+    Add Event
+  </a>
+
 </div>
+
+
+<!-- SEARCH -->
 
 <div class="glass p-3 mb-4" data-aos="fade-up">
+
   <form method="get" class="d-flex gap-2">
-    <input type="text" name="q" value="{{ q }}" class="form-control form-control-glass" placeholder="Search events...">
-    <button type="submit" class="btn btn-outline-glow"><i class="fa-solid fa-magnifying-glass"></i></button>
+
+    <input
+      type="text"
+      name="q"
+      value="{{ q }}"
+      class="form-control form-control-glass"
+      placeholder="Search events..."
+    >
+
+    <button type="submit" class="btn btn-outline-glow">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
   </form>
+
 </div>
 
+
+<!-- EVENTS TABLE -->
+
 <div class="glass-card p-4" data-aos="fade-up">
+
   <div class="table-responsive">
+
     <table class="table table-glass mb-0">
-      <thead><tr><th>Event</th><th>Category</th><th>Organizer</th><th>Date</th><th>Location</th><th>Seats</th><th>Price</th><th>Access</th><th></th></tr></thead>
-      <tbody>
-        {% for e in events %}
+
+      <thead>
         <tr>
+          <th>Event</th>
+          <th>Category</th>
+          <th>Organizer</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Seats</th>
+          <th>Price</th>
+          <th>Access</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+
+      <tbody>
+
+        {% for e in events %}
+
+        <tr>
+
+          <!-- EVENT -->
+
           <td>
+
             <div class="d-flex align-items-center gap-2">
-              <img src="{{ e.image }}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;">
-              <span>{{ e.title }}{% if not e.is_published %} <span class="badge-status disabled" style="font-size:.68rem;">Draft</span>{% endif %}</span>
-            </div>
-          </td>
-          <td>{{ e.category }}</td>
-          <td style="font-size:.82rem;">
-            {% if e.organizer_account %}
-              <span class="text-dim">{{ e.organizer_account.name }}</span>
-            {% else %}
-              <span class="text-faint">{{ e.organizer }}</span>
-            {% endif %}
-          </td>
-          <td>{{ e.date.strftime('%d %b %Y') }}</td>
-          <td>{{ e.location }}</td>
-          <td>{{ e.booked_seats }}/{{ e.total_seats }}</td>
-          <td>₹{{ '%.0f'|format(e.min_price) }}</td>
-          <td>
-            {% if e.event_type == 'physical' %}
-              <span class="text-faint" style="font-size:.78rem;">Physical only</span>
-            {% else %}
-              <span class="badge-status active" style="font-size:.72rem;">
-                <i class="fa-solid fa-video me-1"></i>{{ e.event_type|capitalize }}
+
+              <img
+                src="{{ e.image }}"
+                style="width:44px;height:44px;object-fit:cover;border-radius:8px;"
+                alt="{{ e.title }}"
+              >
+
+              <span>
+
+                {{ e.title }}
+
+                {% if not e.is_published %}
+
+                  <span
+                    class="badge-status disabled"
+                    style="font-size:.68rem;"
+                  >
+                    Draft
+                  </span>
+
+                {% endif %}
+
               </span>
-              <form method="post" action="{{ url_for('admin_event_disable_streaming', event_id=e.id) }}" class="d-inline"
-                    onsubmit="return confirm('Disable online access for this event? Existing bookings are kept, but the Watch Live button will stop working.');">
-                <button type="submit" class="btn btn-ghost-sm" style="font-size:.72rem;padding:2px 6px;" title="Disable online access">
+
+            </div>
+
+          </td>
+
+
+          <!-- CATEGORY -->
+
+          <td>
+            {{ e.category }}
+          </td>
+
+
+          <!-- ORGANIZER -->
+
+          <td style="font-size:.82rem;">
+
+            {% if e.organizer_account %}
+
+              <span class="text-dim">
+                {{ e.organizer_account.name }}
+              </span>
+
+            {% else %}
+
+              <span class="text-faint">
+                {{ e.organizer }}
+              </span>
+
+            {% endif %}
+
+          </td>
+
+
+          <!-- DATE -->
+
+          <td>
+            {{ e.date.strftime('%d %b %Y') }}
+          </td>
+
+
+          <!-- LOCATION -->
+
+          <td>
+            {{ e.location }}
+          </td>
+
+
+          <!-- SEATS -->
+
+          <td>
+            {{ e.booked_seats }}/{{ e.total_seats }}
+          </td>
+
+
+          <!-- PRICE -->
+
+          <td>
+            ₹{{ '%.0f'|format(e.min_price) }}
+          </td>
+
+
+          <!-- ACCESS -->
+
+          <td>
+
+            {% if e.event_type == 'physical' %}
+
+              <span
+                class="text-faint"
+                style="font-size:.78rem;"
+              >
+                Physical only
+              </span>
+
+            {% else %}
+
+              <span
+                class="badge-status active"
+                style="font-size:.72rem;"
+              >
+                <i class="fa-solid fa-video me-1"></i>
+                {{ e.event_type|capitalize }}
+              </span>
+
+
+              <form
+                method="post"
+                action="{{ url_for('admin_event_disable_streaming', event_id=e.id) }}"
+                class="d-inline"
+                onsubmit="return confirm('Disable online access for this event? Existing bookings are kept, but the Watch Live button will stop working.');"
+              >
+
+                <button
+                  type="submit"
+                  class="btn btn-ghost-sm"
+                  style="font-size:.72rem;padding:2px 6px;"
+                  title="Disable online access"
+                >
                   <i class="fa-solid fa-ban"></i>
                 </button>
+
               </form>
+
             {% endif %}
+
           </td>
+
+
+          <!-- ACTIONS -->
+
           <td class="text-end">
-            <a href="{{ url_for('admin_event_edit', event_id=e.id) }}" class="btn btn-ghost-sm"><i class="fa-solid fa-pen"></i></a>
-            <button type="button" class="btn btn-ghost-sm text-danger" data-bs-toggle="modal" data-bs-target="#del{{ e.id }}"><i class="fa-solid fa-trash"></i></button>
-            <div class="modal fade" id="del{{ e.id }}" tabindex="-1">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content glass-card" style="background:var(--navy-2);">
-                  <div class="modal-body p-4">
-                    <h6 class="mb-2">Delete "{{ e.title }}"?</h6>
-                    <p class="text-dim mb-4">This action cannot be undone. All bookings tied to this event will remain in history.</p>
-                    <div class="d-flex gap-2 justify-content-end">
-                      <button class="btn btn-outline-glow" data-bs-dismiss="modal">Cancel</button>
-                      <form method="post" action="{{ url_for('admin_event_delete', event_id=e.id) }}">
-                        <button type="submit" class="btn btn-glow" style="background:var(--danger);">Delete</button>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            <!-- EDIT -->
+
+            <a
+              href="{{ url_for('admin_event_edit', event_id=e.id) }}"
+              class="btn btn-ghost-sm"
+              title="Edit Event"
+            >
+              <i class="fa-solid fa-pen"></i>
+            </a>
+
+
+            <!-- DELETE -->
+
+            <form
+              method="POST"
+              action="{{ url_for('admin_event_delete', event_id=e.id) }}"
+              style="display:inline;"
+              onsubmit="return confirm('Are you sure you want to delete this event?');"
+            >
+
+              <button
+                type="submit"
+                class="btn btn-ghost-sm text-danger"
+                title="Delete Event"
+              >
+                <i class="fa-solid fa-trash"></i>
+              </button>
+
+            </form>
+
           </td>
+
         </tr>
+
+
         {% else %}
-        <tr><td colspan="9" class="text-center text-dim py-5">No events found</td></tr>
+
+        <tr>
+
+          <td
+            colspan="9"
+            class="text-center text-dim py-5"
+          >
+            No events found
+          </td>
+
+        </tr>
+
         {% endfor %}
+
       </tbody>
+
     </table>
+
   </div>
+
 </div>
+
 {% endblock %}

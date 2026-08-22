@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>{% block title %}Eventify — Discover Events. Create Memories.{% endblock %}</title>
+
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎟️</text></svg>">
 
 <!-- Fonts -->
@@ -12,171 +14,840 @@
 
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 <!-- AOS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 {% block extra_css %}{% endblock %}
+
+<style>
+/* =========================================================
+   EVENTIFY FLOATING BACK BUTTON
+   ========================================================= */
+
+.eventify-back-button {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    left: auto;
+
+    z-index: 1500;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-width: 125px;
+    height: 48px;
+    padding: 0 20px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: linear-gradient(
+        135deg,
+        #7c3aed 0%,
+        #a855f7 35%,
+        #d946ef 65%,
+        #ec4899 100%
+    );
+
+    color: #ffffff !important;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+
+    text-decoration: none !important;
+
+    box-shadow:
+        0 10px 30px rgba(124, 58, 237, 0.35),
+        0 0 25px rgba(217, 70, 239, 0.20);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.eventify-back-button:hover {
+    transform: translateY(-4px);
+
+    filter: brightness(1.08);
+
+    box-shadow:
+        0 14px 35px rgba(124, 58, 237, 0.45),
+        0 0 35px rgba(217, 70, 239, 0.35);
+
+    color: #ffffff !important;
+}
+
+.eventify-back-button:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.eventify-back-button i {
+    font-size: 0.9rem;
+    transition: transform 0.25s ease;
+}
+
+.eventify-back-button:hover i {
+    transform: translateX(-4px);
+}
+
+@media (max-width: 768px) {
+    .eventify-back-button {
+        right: 18px;
+        bottom: 18px;
+
+        min-width: 52px;
+        width: 52px;
+        height: 52px;
+
+        padding: 0;
+        border-radius: 50%;
+    }
+
+    .eventify-back-button span {
+        display: none;
+    }
+
+    .eventify-back-button i {
+        font-size: 1rem;
+    }
+}
+</style>
+
 </head>
+
 <body>
 
+<!-- Background -->
 <div class="bg-scene">
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
-  <div class="blob blob-4"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
 </div>
+
 <div class="grain-overlay"></div>
 
+
+<!-- Login celebration -->
 {% if celebrate_login %}
-<div id="celebrateLogin" class="d-none" data-message="Welcome to Eventify! 🎉"></div>
+<div id="celebrateLogin"
+     class="d-none"
+     data-message="Welcome to Eventify! 🎉">
+</div>
 {% endif %}
 
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
 {% block nav %}
+
 <nav class="navbar navbar-expand-lg navbar-eventify">
-  <div class="container">
-    <a class="navbar-brand brand-logo" href="{{ url_for('home') }}">
-      <span class="brand-logo-icon">🎟️</span><span class="gradient-text brand-logo-text">EVENTIFY</span>
-    </a>
-    <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <i class="fa-solid fa-bars text-white"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mx-auto">
-        <li class="nav-item"><a class="nav-link nav-link-custom {% if request.endpoint=='home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a></li>
-        <li class="nav-item"><a class="nav-link nav-link-custom {% if request.endpoint=='events' %}active{% endif %}" href="{{ url_for('events') }}">Events</a></li>
-        <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('events') }}#categories">Categories</a></li>
-        <li class="nav-item"><a class="nav-link nav-link-custom {% if request.endpoint=='discover_map' %}active{% endif %}" href="{{ url_for('discover_map') }}">Discover</a></li>
-        <li class="nav-item"><a class="nav-link nav-link-custom {% if request.endpoint=='ai_search' %}active{% endif %}" href="{{ url_for('ai_search') }}">Ask Eventify</a></li>
-        <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}#about">About</a></li>
-        <li class="nav-item"><a class="nav-link nav-link-custom" href="{{ url_for('home') }}#contact">Contact</a></li>
-      </ul>
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        {% if current_user.is_authenticated and not current_user.is_admin %}
-          <div class="dropdown notif-dropdown">
-            <button class="btn btn-ghost-sm notif-bell" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="fa-solid fa-bell"></i>
-              {% if todays_bookings %}<span class="notif-badge">{{ todays_bookings|length }}</span>{% endif %}
-            </button>
-            <div class="dropdown-menu dropdown-menu-end notif-menu p-2">
-              <h6 class="px-2 py-1 mb-1 text-uppercase text-mono" style="font-size:.72rem;">Notifications</h6>
-              {% if todays_bookings %}
-                {% for b in todays_bookings %}
-                <a href="{{ url_for('ticket', booking_id=b.id) }}" class="notif-item">
-                  <div class="notif-item-icon">🔔</div>
-                  <div>
-                    <strong>Your event is today!</strong>
-                    <p class="mb-0 text-dim" style="font-size:.82rem;">{{ b.event.title }} · {{ b.event.time }}<br>{{ b.event.venue }}, {{ b.event.location }}</p>
-                  </div>
+
+    <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand brand-logo"
+           href="{{ url_for('home') }}">
+
+            <span class="brand-logo-icon">🎟️</span>
+
+            <span class="gradient-text brand-logo-text">
+                EVENTIFY
+            </span>
+
+        </a>
+
+
+        <!-- Mobile menu -->
+        <button
+            class="navbar-toggler border-0 text-white"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav">
+
+            <i class="fa-solid fa-bars text-white"></i>
+
+        </button>
+
+
+        <!-- Navigation -->
+        <div class="collapse navbar-collapse"
+             id="navbarNav">
+
+            <ul class="navbar-nav mx-auto">
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom {% if request.endpoint=='home' %}active{% endif %}"
+                        href="{{ url_for('home') }}">
+                        Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom {% if request.endpoint=='events' %}active{% endif %}"
+                        href="{{ url_for('events') }}">
+                        Events
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom"
+                        href="{{ url_for('events') }}#categories">
+                        Categories
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom {% if request.endpoint=='discover_map' %}active{% endif %}"
+                        href="{{ url_for('discover_map') }}">
+                        Discover
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom {% if request.endpoint=='ai_search' %}active{% endif %}"
+                        href="{{ url_for('ai_search') }}">
+                        Ask Eventify
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom"
+                        href="{{ url_for('home') }}#about">
+                        About
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a
+                        class="nav-link nav-link-custom"
+                        href="{{ url_for('home') }}#contact">
+                        Contact
+                    </a>
+                </li>
+
+            </ul>
+
+
+            <!-- User navigation -->
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                {% if current_user.is_authenticated and not current_user.is_admin %}
+
+                <!-- Today's event notifications -->
+                <div class="dropdown notif-dropdown">
+
+                    <button
+                        class="btn btn-ghost-sm notif-bell"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                        {% if todays_bookings %}
+                        <span class="notif-badge">
+                            {{ todays_bookings|length }}
+                        </span>
+                        {% endif %}
+
+                    </button>
+
+
+                    <div class="dropdown-menu dropdown-menu-end notif-menu p-2">
+
+                        <h6
+                            class="px-2 py-1 mb-1 text-uppercase text-mono"
+                            style="font-size:.72rem;">
+
+                            Notifications
+
+                        </h6>
+
+
+                        {% if todays_bookings %}
+
+                            {% for b in todays_bookings %}
+
+                            <a
+                                href="{{ url_for('ticket', booking_id=b.id) }}"
+                                class="notif-item">
+
+                                <div class="notif-item-icon">
+                                    🔔
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        Your event is today!
+                                    </strong>
+
+                                    <p
+                                        class="mb-0 text-dim"
+                                        style="font-size:.82rem;">
+
+                                        {{ b.event.title }}
+                                        ·
+                                        {{ b.event.time }}
+
+                                        <br>
+
+                                        {{ b.event.venue }},
+                                        {{ b.event.location }}
+
+                                    </p>
+
+                                </div>
+
+                            </a>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <p
+                                class="text-dim px-2 py-2 mb-0"
+                                style="font-size:.85rem;">
+
+                                No events happening today.
+
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Feed -->
+                <a
+                    href="{{ url_for('event_feed') }}"
+                    class="btn btn-ghost-sm">
+
+                    <i class="fa-solid fa-fire me-1"></i>
+                    Feed
+
                 </a>
-                {% endfor %}
-              {% else %}
-                <p class="text-dim px-2 py-2 mb-0" style="font-size:.85rem;">No events happening today.</p>
-              {% endif %}
+
+
+                <!-- Notifications -->
+                <a
+                    href="{{ url_for('notifications') }}"
+                    class="btn btn-ghost-sm position-relative"
+                    title="Notifications">
+
+                    <i class="fa-solid fa-bell"></i>
+
+                    {% if unread_notif_count > 0 %}
+
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                        style="background:var(--grad-primary);font-size:.6rem;">
+
+                        {{ unread_notif_count if unread_notif_count < 10 else '9+' }}
+
+                    </span>
+
+                    {% endif %}
+
+                </a>
+
+
+                <!-- Dashboard -->
+                <a
+                    href="{{ url_for('dashboard') }}"
+                    class="btn btn-ghost-sm">
+
+                    <i class="fa-solid fa-gauge me-1"></i>
+                    Dashboard
+
+                </a>
+
+
+                <!-- Wishlist -->
+                <a
+                    href="{{ url_for('wishlist') }}"
+                    class="btn btn-ghost-sm">
+
+                    <i class="fa-solid fa-heart me-1"></i>
+                    Wishlist
+
+                </a>
+
+
+                <!-- Profile -->
+                <a
+                    href="{{ url_for('profile') }}"
+                    class="btn btn-ghost-sm">
+
+                    <i class="fa-solid fa-user me-1"></i>
+                    Profile
+
+                </a>
+
+
+                <!-- Logout -->
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="btn btn-outline-glow">
+
+                    Logout
+
+                </a>
+
+
+                {% else %}
+
+                <!-- Login -->
+                <a
+                    href="{{ url_for('login') }}"
+                    class="btn btn-outline-glow">
+
+                    Login
+
+                </a>
+
+
+                <!-- Register -->
+                <a
+                    href="{{ url_for('register') }}"
+                    class="btn btn-glow">
+
+                    Sign Up
+
+                </a>
+
+                {% endif %}
+
             </div>
-          </div>
-          <a href="{{ url_for('event_feed') }}" class="btn btn-ghost-sm"><i class="fa-solid fa-fire me-1"></i> Feed</a>
-          <a href="{{ url_for('notifications') }}" class="btn btn-ghost-sm position-relative" title="Notifications">
-            <i class="fa-solid fa-bell"></i>
-            {% if unread_notif_count > 0 %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background:var(--grad-primary);font-size:.6rem;">{{ unread_notif_count if unread_notif_count < 10 else '9+' }}</span>
-            {% endif %}
-          </a>
-          <a href="{{ url_for('dashboard') }}" class="btn btn-ghost-sm"><i class="fa-solid fa-gauge me-1"></i> Dashboard</a>
-          <a href="{{ url_for('wishlist') }}" class="btn btn-ghost-sm"><i class="fa-solid fa-heart me-1"></i> Wishlist</a>
-          <a href="{{ url_for('profile') }}" class="btn btn-ghost-sm"><i class="fa-solid fa-user me-1"></i> Profile</a>
-          <a href="{{ url_for('logout') }}" class="btn btn-outline-glow">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login') }}" class="btn btn-outline-glow">Login</a>
-          <a href="{{ url_for('register') }}" class="btn btn-glow">Sign Up</a>
-        {% endif %}
-      </div>
+
+        </div>
+
     </div>
-  </div>
+
 </nav>
+
 {% endblock %}
 
-<div class="alert-container position-fixed top-0 end-0 p-3" style="z-index:2000; margin-top:80px;">
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-glass d-flex align-items-center gap-2 shadow" role="alert">
-          {% if category == 'success' %}<i class="fa-solid fa-circle-check text-success"></i>
-          {% elif category == 'danger' %}<i class="fa-solid fa-circle-exclamation text-danger"></i>
-          {% elif category == 'warning' %}<i class="fa-solid fa-triangle-exclamation text-warning"></i>
-          {% else %}<i class="fa-solid fa-circle-info text-info"></i>{% endif %}
-          <span>{{ message }}</span>
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+
+
+<!-- =========================================================
+     FLASH MESSAGES
+     ========================================================= -->
+
+<div
+    class="alert-container position-fixed top-0 end-0 p-3"
+    style="z-index:2000; margin-top:80px;">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+            <div
+                class="alert alert-glass d-flex align-items-center gap-2 shadow"
+                role="alert">
+
+                {% if category == 'success' %}
+
+                    <i class="fa-solid fa-circle-check text-success"></i>
+
+                {% elif category == 'danger' %}
+
+                    <i class="fa-solid fa-circle-exclamation text-danger"></i>
+
+                {% elif category == 'warning' %}
+
+                    <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+
+                {% else %}
+
+                    <i class="fa-solid fa-circle-info text-info"></i>
+
+                {% endif %}
+
+                <span>{{ message }}</span>
+
+            </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
 </div>
 
+
+
+<!-- =========================================================
+     MAIN CONTENT
+     ========================================================= -->
+
 <main>
-  {% block content %}{% endblock %}
+
+    {% block content %}
+
+    {% endblock %}
+
 </main>
 
+
+
+<!-- =========================================================
+     FLOATING BACK BUTTON
+     ========================================================= -->
+
+{% if request.endpoint != 'home' %}
+
+<a
+    href="javascript:void(0);"
+    class="eventify-back-button"
+    onclick="eventifyGoBack()"
+    title="Go back">
+
+    <i class="fa-solid fa-arrow-left"></i>
+
+    <span>Back</span>
+
+</a>
+
+{% endif %}
+
+
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+
 {% block footer %}
+
 <footer class="site-footer">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-lg-4">
-        <a href="{{ url_for('home') }}" class="brand-logo d-inline-flex mb-3">
-          <span class="brand-logo-icon">🎟️</span><span class="gradient-text brand-logo-text">EVENTIFY</span>
-        </a>
-        <p class="text-dim">Discover concerts, conferences, workshops, sports events and cultural
-          programs — then book your seat in a few clicks.</p>
-        <p class="text-dim mb-0" style="font-size:.9rem;"><i class="fa-solid fa-phone me-2 text-info"></i>+91 63060 73485</p>
-        <div class="d-flex gap-2 mt-3">
-          <a href="https://www.instagram.com/eventify.01/#" target="_blank" rel="noopener" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
-          <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
+
+    <div class="container">
+
+        <div class="row g-4">
+
+            <!-- Brand -->
+            <div class="col-lg-4">
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="brand-logo d-inline-flex mb-3">
+
+                    <span class="brand-logo-icon">
+                        🎟️
+                    </span>
+
+                    <span class="gradient-text brand-logo-text">
+                        EVENTIFY
+                    </span>
+
+                </a>
+
+
+                <p class="text-dim">
+
+                    Discover concerts, conferences, workshops,
+                    sports events and cultural programs —
+                    then book your seat in a few clicks.
+
+                </p>
+
+
+                <p
+                    class="text-dim mb-0"
+                    style="font-size:.9rem;">
+
+                    <i class="fa-solid fa-phone me-2 text-info"></i>
+
+                    +91 63060 73485
+
+                </p>
+
+
+                <div class="d-flex gap-2 mt-3">
+
+                    <a
+                        href="https://www.instagram.com/eventify.01/#"
+                        target="_blank"
+                        rel="noopener"
+                        class="social-icon">
+
+                        <i class="fa-brands fa-instagram"></i>
+
+                    </a>
+
+                    <a href="#" class="social-icon">
+                        <i class="fa-brands fa-x-twitter"></i>
+                    </a>
+
+                    <a href="#" class="social-icon">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" class="social-icon">
+                        <i class="fa-brands fa-youtube"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quick links -->
+            <div class="col-lg-2 col-6">
+
+                <h6
+                    class="mb-3 text-uppercase text-mono"
+                    style="font-size:.8rem;">
+
+                    Quick Links
+
+                </h6>
+
+                <ul
+                    class="list-unstyled d-flex flex-column gap-2">
+
+                    <li>
+                        <a
+                            href="{{ url_for('home') }}"
+                            class="text-dim">
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ url_for('events') }}"
+                            class="text-dim">
+                            Events
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ url_for('home') }}#about"
+                            class="text-dim">
+                            About
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ url_for('home') }}#contact"
+                            class="text-dim">
+                            Contact
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Categories -->
+            <div class="col-lg-3 col-6">
+
+                <h6
+                    class="mb-3 text-uppercase text-mono"
+                    style="font-size:.8rem;">
+
+                    Categories
+
+                </h6>
+
+                <ul
+                    class="list-unstyled d-flex flex-column gap-2">
+
+                    <li>
+                        <a
+                            href="{{ url_for('events', category='Music') }}"
+                            class="text-dim">
+                            Music
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ url_for('events', category='Sports') }}"
+                            class="text-dim">
+                            Sports
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ url_for('events', category='Technology') }}"
+                            class="text-dim">
+                            Technology
+                        </a>
+                    </li>
+
+                    <li>
+                        <a
+                            href="{{ url_for('events', category='Workshop') }}"
+                            class="text-dim">
+                            Workshops
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Support -->
+            <div class="col-lg-3">
+
+                <h6
+                    class="mb-3 text-uppercase text-mono"
+                    style="font-size:.8rem;">
+
+                    Support
+
+                </h6>
+
+                <ul
+                    class="list-unstyled d-flex flex-column gap-2">
+
+                    <li>
+                        <a href="#" class="text-dim">
+                            Help Center
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="text-dim">
+                            FAQs
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="text-dim">
+                            Privacy Policy
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="text-dim">
+                            Terms
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
         </div>
-      </div>
-      <div class="col-lg-2 col-6">
-        <h6 class="mb-3 text-uppercase text-mono" style="font-size:.8rem;">Quick Links</h6>
-        <ul class="list-unstyled d-flex flex-column gap-2">
-          <li><a href="{{ url_for('home') }}" class="text-dim">Home</a></li>
-          <li><a href="{{ url_for('events') }}" class="text-dim">Events</a></li>
-          <li><a href="{{ url_for('home') }}#about" class="text-dim">About</a></li>
-          <li><a href="{{ url_for('home') }}#contact" class="text-dim">Contact</a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3 col-6">
-        <h6 class="mb-3 text-uppercase text-mono" style="font-size:.8rem;">Categories</h6>
-        <ul class="list-unstyled d-flex flex-column gap-2">
-          <li><a href="{{ url_for('events', category='Music') }}" class="text-dim">Music</a></li>
-          <li><a href="{{ url_for('events', category='Sports') }}" class="text-dim">Sports</a></li>
-          <li><a href="{{ url_for('events', category='Technology') }}" class="text-dim">Technology</a></li>
-          <li><a href="{{ url_for('events', category='Workshop') }}" class="text-dim">Workshops</a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3">
-        <h6 class="mb-3 text-uppercase text-mono" style="font-size:.8rem;">Support</h6>
-        <ul class="list-unstyled d-flex flex-column gap-2">
-          <li><a href="#" class="text-dim">Help Center</a></li>
-          <li><a href="#" class="text-dim">FAQs</a></li>
-          <li><a href="#" class="text-dim">Privacy Policy</a></li>
-          <li><a href="#" class="text-dim">Terms</a></li>
-        </ul>
-      </div>
+
+
+        <hr
+            class="mt-5"
+            style="border-color: var(--border);">
+
+
+        <div
+            class="d-flex flex-wrap justify-content-between align-items-center text-faint"
+            style="font-size:.85rem;">
+
+            <span>
+                © {{ current_year }} Eventify.
+                All rights reserved.
+            </span>
+
+            <span>
+                Crafted by
+                <span class="creator-name">
+                    Shivendra
+                </span>
+            </span>
+
+        </div>
+
     </div>
-    <hr class="mt-5" style="border-color: var(--border);">
-    <div class="d-flex flex-wrap justify-content-between align-items-center text-faint" style="font-size:.85rem;">
-      <span>© {{ current_year }} Eventify. All rights reserved.</span>
-      <span>Crafted by <span class="creator-name">Shivendra</span></span>
-    </div>
-  </div>
+
 </footer>
+
 {% endblock %}
 
+
+
+<!-- =========================================================
+     SCRIPTS
+     ========================================================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>AOS.init({ duration: 700, once: true, offset: 60 });</script>
+
+<script>
+AOS.init({
+    duration: 700,
+    once: true,
+    offset: 60
+});
+</script>
+
+
+<!-- Eventify Back Button Logic -->
+<script>
+
+function eventifyGoBack() {
+
+    /*
+     * If browser history exists,
+     * go to the previous Eventify page.
+     */
+
+    if (window.history.length > 1) {
+
+        window.history.back();
+
+    } else {
+
+        /*
+         * If there is no previous page,
+         * safely return to Eventify home.
+         */
+
+        window.location.href = "{{ url_for('home') }}";
+
+    }
+
+}
+
+</script>
+
+
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 {% block extra_js %}{% endblock %}
+
 </body>
 </html>

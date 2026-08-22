@@ -275,7 +275,52 @@ def run_migrations():
                 db.session.add(Badge(code=code, name=name, emoji=emoji, description=desc))
         db.session.commit()
 
+def initialize_required_accounts():
+    """Create/update the protected Eventify admin and organizer accounts
+    when explicitly enabled through environment variables."""
+    with app.app_context():
+        admin_email = os.environ.get("EVENTIFY_ADMIN_EMAIL")
+        admin_password = os.environ.get("EVENTIFY_ADMIN_PASSWORD")
+        organizer_email = os.environ.get("EVENTIFY_ORGANIZER_EMAIL")
+        organizer_password = os.environ.get("EVENTIFY_ORGANIZER_PASSWORD")
 
+        if admin_email and admin_password:
+            admin = User.query.filter_by(email=admin_email.lower()).first()
+            if not admin:
+                admin = User(
+                    name="Eventify Admin",
+                    email=admin_email.lower(),
+                    role="admin",
+                    status="active"
+                )
+                admin.set_password(admin_password)
+                db.session.add(admin)
+            else:
+                admin.role = "admin"
+                admin.status = "active"
+                admin.set_password(admin_password)
+
+        if organizer_email and organizer_password:
+            organizer = User.query.filter_by(email=organizer_email.lower()).first()
+            if not organizer:
+                organizer = User(
+                    name="Eventify Organizer",
+                    email=organizer_email.lower(),
+                    role="organizer",
+                    status="active"
+                )
+                organizer.set_password(organizer_password)
+                db.session.add(organizer)
+            else:
+                organizer.role = "organizer"
+                organizer.status = "active"
+                organizer.set_password(organizer_password)
+
+        db.session.commit()
+
+
+if os.environ.get("EVENTIFY_INITIALIZE_ACCOUNTS") == "true":
+    initialize_required_accounts()
 run_migrations()
 
 login_manager = LoginManager(app)
@@ -546,25 +591,83 @@ def inject_globals():
 
 # ---------- public pages ----------
 
+# ---------- public pages ----------
+
 @app.route("/")
 def home():
     categories = Category.query.all()
-    featured = Event.query.filter_by(is_published=True).order_by(Event.created_at.desc()).limit(6).all()
-    trending = Event.query.filter_by(is_trending=True, is_published=True).limit(4).all()
-    upcoming = (Event.query.filter(Event.date >= date.today(), Event.is_published == True)  # noqa: E712
-                .order_by(Event.date.asc()).limit(6).all())
+
+    featured = (
+        Event.query
+        .filter_by(is_published=True)
+        .order_by(Event.created_at.desc())
+        .limit(6)
+        .all()
+    )
+
+    trending = (
+        Event.query
+        .filter_by(is_trending=True, is_published=True)
+        .limit(4)
+        .all()
+    )
+
+    upcoming = (
+        Event.query
+        .filter(
+            Event.date >= date.today(),
+            Event.is_published == True
+        )
+        .order_by(Event.date.asc())
+        .limit(6)
+        .all()
+    )
+
     ullas = Event.query.filter_by(title="ULLAS").first()
-    cities = [row[0] for row in db.session.query(Event.location).filter_by(is_published=True)
-              .distinct().order_by(Event.location).all()]
+
+    cities = [
+        row[0]
+        for row in (
+            db.session
+            .query(Event.location)
+            .filter_by(is_published=True)
+            .distinct()
+            .order_by(Event.location)
+            .all()
+        )
+    ]
+
     stats = {
         "users": User.query.filter_by(role="user").count() + 9850,
         "events": Event.query.filter_by(is_published=True).count() + 470,
         "tickets": BookingItem.query.count() * 3 + 24500,
-        "cities": db.session.query(Event.location).filter_by(is_published=True).distinct().count() + 42,
+        "cities": (
+            db.session
+            .query(Event.location)
+            .filter_by(is_published=True)
+            .distinct()
+            .count()
+            + 42
+        ),
     }
-    return render_template("index.html", categories=categories, featured=featured,
-                            trending=trending, upcoming=upcoming, stats=stats,
-                            ullas=ullas, cities=cities)
+
+    return render_template(
+        "index.html",
+        categories=categories,
+        featured=featured,
+        trending=trending,
+        upcoming=upcoming,
+        stats=stats,
+        ullas=ullas,
+        cities=cities
+    )
+
+
+# ---------- role selection portal ----------
+
+@app.route("/portal")
+def portal():
+    return render_template("role_select.html")
 
 
 AI_CATEGORY_SYNONYMS = {

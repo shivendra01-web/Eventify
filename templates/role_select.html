@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Eventify — Choose Your Portal{% endblock %}
+
+{% block content %}
+
+<section class="section" style="min-height:80vh;display:flex;align-items:center;">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <div class="section-label">WELCOME TO EVENTIFY</div>
+
+            <h1 class="section-title mb-3">
+                How do you want to continue?
+            </h1>
+
+            <p class="text-dim mx-auto" style="max-width:650px;">
+                Choose your Eventify experience. Whether you're attending an
+                event, organizing one, or managing the platform, we've got you covered.
+            </p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- USER -->
+            <div class="col-md-4">
+                <div class="glass-card feature-card h-100 text-center p-5">
+
+                    <div class="icon-wrap mx-auto mb-4">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <h3 class="mb-3">I'm an Attendee</h3>
+
+                    <p class="text-dim mb-4">
+                        Discover events, book tickets, manage bookings,
+                        connect with people and enjoy unforgettable experiences.
+                    </p>
+
+                    <a href="{{ url_for('login') }}"
+                       class="btn btn-glow w-100">
+                        User Login
+                        <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+
+                    <p class="text-faint mt-3 mb-0" style="font-size:.85rem;">
+                        Don't have an account?
+                        <a href="{{ url_for('register') }}">Sign Up</a>
+                    </p>
+
+                </div>
+            </div>
+
+
+            <!-- ORGANIZER -->
+            <div class="col-md-4">
+                <div class="glass-card feature-card h-100 text-center p-5">
+
+                    <div class="icon-wrap mx-auto mb-4">
+                        <i class="fa-solid fa-calendar-plus"></i>
+                    </div>
+
+                    <h3 class="mb-3">I'm an Organizer</h3>
+
+                    <p class="text-dim mb-4">
+                        Create events, manage tickets, monitor attendees,
+                        control livestreams and manage your events.
+                    </p>
+
+                    <a href="{{ url_for('organizer_login') }}"
+                       class="btn btn-glow w-100">
+                        Organizer Login
+                        <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+
+                </div>
+            </div>
+
+
+            <!-- ADMIN -->
+            <div class="col-md-4">
+                <div class="glass-card feature-card h-100 text-center p-5">
+
+                    <div class="icon-wrap mx-auto mb-4">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+                    <h3 class="mb-3">I'm an Admin</h3>
+
+                    <p class="text-dim mb-4">
+                        Manage users, organizers, events, bookings,
+                        reviews, coupons, analytics and the Eventify platform.
+                    </p>
+
+                    <a href="{{ url_for('admin_login') }}"
+                       class="btn btn-glow w-100">
+                        Admin Login
+                        <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('home') }}" class="btn btn-outline-glow">
+                <i class="fa-solid fa-house me-1"></i>
+                Continue to Eventify
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
